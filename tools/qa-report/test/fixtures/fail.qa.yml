@@ -1,0 +1,296 @@
+schema_version: 1
+card: TRACKER-102
+feature_title_plain: Authoring a proposal that matches the approved design
+project_plain: Proposal builder
+tested_on: 2026-10-01
+status_as_of: 2026-10-02
+environment_label: Pre-release test environment
+build_plain: commit a1b2c3d
+
+summary:
+  lead: We found problems that need fixing before this is ready.
+  tested: >-
+    We built a full sample proposal using only the admin screens, then compared what came out with the approved design
+    on screen, in light and dark themes, and as a downloaded PDF.
+  found: >-
+    The look of the cover, option cards, roadmap, tables and printed cover all match. But we found 8 issues: one
+    blocker (a crash, now fixed), five major issues and two minor ones. 4 are still open.
+  means: >-
+    Right now a proposal cannot be authored end to end so that it matches the approved design, and the PDF is not
+    clean enough to send to a client.
+  next: We are fixing the open issues and will re-test them. We will send an updated report when the major issues are verified.
+
+how_we_tested_plain: >-
+  We tested in a pre-release test environment that mirrors the live product but holds no real client data. We built
+  the sample proposal ourselves using only the admin screens, then compared it with the approved design in light and
+  dark themes and as a downloaded PDF. The sample records were deleted afterwards, and the live product was not changed.
+
+requirements:
+  - { id: R1, result: MET, journeys: [1], text_plain: The four-figure strip on the cover matches the design. }
+  - { id: R2, result: MET, journeys: [1], text_plain: "The three Discovery option cards, the recommended badge and the price range match the design." }
+  - { id: R3, result: MET, journeys: [5], text_plain: "The roadmap section (bands, gates, priced rows, Build total) matches the design." }
+  - { id: R4, result: MET, journeys: [5], text_plain: The diagram section looks right on screen in both themes. }
+  - { id: R5, result: MET, journeys: [1], text_plain: The Build table and its total add up correctly. }
+  - { id: R6, result: MET, journeys: [5], text_plain: The Part A / B / C section dividers match the design. }
+  - { id: R7, result: MET, journeys: [6], text_plain: "Light and dark themes work, and the cover stays dark in both." }
+  - { id: R8, result: MET, journeys: [9], text_plain: "The printed cover is light, with the light logo and a magenta rule." }
+  - { id: R9, result: NOT MET, journeys: [2], text_plain: The cover headline and the label above it can be set by an author. }
+  - { id: R10, result: NOT MET, journeys: [10], text_plain: The proposal has a Contents list. }
+  - { id: R11, result: NOT MET, journeys: [7], text_plain: Section headings match the design. }
+  - { id: R12, result: NOT MET, journeys: [4], text_plain: The New proposal screen handles mistakes without crashing. }
+  - { id: R13, result: NOT MET, journeys: [8], text_plain: The diagram image appears in the downloaded PDF. }
+  - { id: R14, result: NOT MET, journeys: [8], text_plain: The PDF contains only the proposal. }
+  - { id: R15, result: NOT MET, journeys: [3], text_plain: "Phases, option groups and line items can be added together on the New proposal screen" }
+
+coverage:
+  columns: [Light, Dark, PDF]
+  rows:
+    - area_plain: Cover and summary figures
+      cells: [PASS, PASS, PASS]
+    - area_plain: Option cards and roadmap
+      cells: [PASS, PASS, NOT TESTED]
+    - area_plain: Diagram section
+      cells: [PASS, PASS, FAIL]
+    - area_plain: Page layout of the PDF
+      cells: [NOT TESTED, NOT TESTED, FAIL]
+
+journeys:
+  - id: 1
+    title_plain: Set up the proposal in steps
+    description_plain: Over several saves, entered the dates, cover figures, phases, option cards and line items.
+    result: PASS
+    evidence: [1a]
+    technical_detail: CANARY-TECH-1 Via /admin/proposals/new then /admin/proposals/:id/edit, saved incrementally.
+  - id: 2
+    title_plain: Give the proposal a headline and label
+    description_plain: Looked for a way to set the cover headline and the label above it.
+    result: FAIL
+    evidence: []
+    evidence_note_plain: No headline field exists to capture
+    technical_detail: CANARY-INTERNAL-J2 proposals.title exists (db/schema.rb:456) but proposal_params never permits it.
+  - id: 3
+    title_plain: Add phases, option groups and line items in one pass
+    description_plain: Added them all on the New proposal screen before the first save.
+    result: FAIL
+    evidence: []
+    evidence_note_plain: Checked directly; no screenshot
+    technical_detail: CANARY-INTERNAL-J3 Phase/Option-group selects list only persisted rows.
+  - id: 4
+    title_plain: Add a diagram image on a new proposal
+    description_plain: Attached an image to a new proposal that also had a form mistake, then saved.
+    result: FAIL
+    evidence: []
+    evidence_note_plain: Ended on an error page
+    technical_detail: "CANARY-INTERNAL-J4 ArgumentError: Cannot get a signed_id for a new record (file_upload_component.html.erb:7)."
+  - id: 5
+    title_plain: Add diagram, roadmap and written sections
+    description_plain: Added them in steps and previewed the result.
+    result: PASS
+    evidence: [1b]
+    technical_detail: CANARY-INTERNAL-J5 Narrative Summary via Lexxy rich text; diagram section 2; roadmap section 3.
+  - id: 6
+    title_plain: Preview in light and dark
+    description_plain: Switched themes in the preview; the cover stayed dark in both.
+    result: PASS
+    evidence: [1a, 1b, 1c]
+    technical_detail: CANARY-INTERNAL-J6 Tier price range renders via tier_price_display.
+  - id: 7
+    title_plain: Compare section headings with the design
+    description_plain: Checked each section heading against the approved design.
+    result: FAIL
+    evidence: [1a]
+    technical_detail: CANARY-INTERNAL-J7 Section header markup fuses number and title in one H2.
+  - id: 8
+    title_plain: Download the proposal as a PDF
+    description_plain: Sent the proposal, downloaded the PDF and checked every page.
+    result: FAIL
+    evidence: [2a, 2b]
+    technical_detail: CANARY-INTERNAL-J8 Admin preview route does not support .pdf.
+  - id: 9
+    title_plain: Check the printed cover
+    description_plain: Looked at the cover page of the downloaded PDF.
+    result: PASS
+    evidence: [2a]
+    technical_detail: CANARY-INTERNAL-J9 Print cover uses the on_light wordmark.
+  - id: 10
+    title_plain: Use the Contents list
+    description_plain: "Could not be tried: there is no Contents list in this build."
+    result: BLOCKED
+    evidence: []
+    evidence_note_plain: Could not be tried
+    technical_detail: CANARY-INTERNAL-J10 Grepped document_component.html.erb for contents/toc, zero matches.
+
+issues:
+  - id: D1
+    severity: MAJOR
+    status: FIXED · NOT YET RE-TESTED
+    title_plain: The proposal's headline and label above it cannot be set
+    impact_plain: >-
+      Every proposal falls back to the generic heading "Proposal for" plus the company name, with no label above it,
+      so the approved headline cannot be reproduced.
+    steps_plain:
+      - Open the New proposal screen.
+      - Look through the Details section for a title or label field.
+    expected_plain: Title and label fields in Details.
+    actual_plain: There are no such fields.
+    status_note_plain: "Fixed in PR #95; awaiting re-test."
+    root_cause: CANARY-INTERNAL-D1 app/controllers/admin/proposals_controller.rb:122-136 (proposal_params). TRACKER-103.
+  - id: D2
+    severity: BLOCKER
+    status: FIXED & VERIFIED
+    title_plain: Creating a new proposal fails with an error when a diagram image is attached
+    impact_plain: >-
+      If you upload a diagram image and any other field on the form has a mistake, the whole screen shows an error page
+      and everything you entered is lost.
+    steps_plain:
+      - Open the New proposal screen.
+      - Add a section, set its type to Diagram and upload an image.
+      - Add a line item set to "Pick one option" without choosing an option group.
+      - Select Create proposal.
+    expected_plain: The form reopens with a message about the missing option group, and your image and entries are kept.
+    actual_plain: An error page appears and nothing is saved.
+    status_note_plain: "Fixed in PR #97 and PR #98; re-tested October 2, 2026."
+    root_cause: CANARY-INTERNAL-D2 app/components/ui/file_upload_component.html.erb:7 calls signed_id. TRACKER-104.
+  - id: D3
+    severity: MAJOR
+    status: OPEN
+    title_plain: Phases and option groups added on the same screen cannot be chosen for a line item
+    impact_plain: >-
+      A first-time author who adds phases, option groups and line items in one pass cannot assign a line item to the
+      phase or group they just added.
+    steps_plain:
+      - Open the New proposal screen.
+      - Add a phase and an option group.
+      - Add a line item and open its Phase and Option group choices.
+    expected_plain: The phase and option group you just added are listed.
+    actual_plain: Only phases and groups from an already saved proposal are listed.
+    status_note_plain: Open as of October 2, 2026.
+    root_cause: CANARY-INTERNAL-D3 nested line-item fields partial populates selects from persisted associations only.
+  - id: D4
+    severity: MAJOR
+    status: OPEN
+    title_plain: The diagram image shows as a broken picture in the PDF
+    impact_plain: The diagram looks right on screen in both themes, but the downloaded PDF shows a broken-image icon above the caption.
+    steps_plain:
+      - Send a proposal that has a diagram section with an image.
+      - Download its PDF.
+      - Go to the diagram page.
+    expected_plain: The diagram image appears in the PDF.
+    actual_plain: A broken-image icon appears above the (correct) caption.
+    screenshot: 2a
+    status_note_plain: Open as of October 2, 2026.
+    root_cause: CANARY-INTERNAL-D4 app/services/proposal_pdf_service.rb inlines fonts but not diagram_image.
+  - id: D5
+    severity: MAJOR
+    status: OPEN
+    title_plain: The PDF includes the website's menu bar and footer
+    impact_plain: >-
+      The on-screen proposal is clean, but the PDF adds the public website's black menu bar above the cover and an
+      extra last page of website footer links.
+    steps_plain:
+      - Send a proposal.
+      - Download its PDF.
+      - Look at page 1 and the final page.
+    expected_plain: The PDF contains only the proposal.
+    actual_plain: A black header bar with a menu icon sits above the cover, and a fifth page shows the website footer.
+    screenshot: 2b
+    status_note_plain: Open as of October 2, 2026.
+    root_cause: CANARY-INTERNAL-D5 ProposalPdfService#component_html renders with no layout false.
+  - id: D6
+    severity: MAJOR
+    status: DEFERRED
+    title_plain: The proposal has no table of contents
+    impact_plain: The approved design has a Contents list. The built proposal has nothing like it.
+    steps_plain:
+      - Open any authored proposal.
+      - Look below the cover for a Contents list.
+    expected_plain: A Contents list linking to each section.
+    actual_plain: No Contents list.
+    status_note_plain: "Deferred. Reason: being delivered as its own piece of work rather than as part of this round."
+    root_cause: CANARY-INTERNAL-D6 no TOC in Proposals::DocumentComponent.
+  - id: D7
+    severity: MINOR
+    status: OPEN
+    title_plain: Section headings do not match the approved design
+    impact_plain: The design shows a small coloured label above a plain heading. The built proposal joins the number and title into one heading.
+    steps_plain:
+      - Open any authored proposal.
+      - Compare a section heading with the approved design.
+    expected_plain: A coloured label above a plain heading.
+    actual_plain: One combined heading with a grey number.
+    status_note_plain: Open as of October 2, 2026.
+    root_cause: CANARY-INTERNAL-D7 app/components/proposals/document_component.html.erb:92-97.
+  - id: D8
+    severity: MINOR
+    status: WON'T FIX
+    title_plain: The "Body" field in Details never appears in the proposal
+    impact_plain: Authors naturally fill in the first field on the form, and that text silently disappears from what the client sees.
+    steps_plain:
+      - Open the New proposal screen.
+      - Type text into the Body field in Details.
+      - Preview the proposal.
+    expected_plain: The text appears somewhere, or the field is clearly marked as not shown.
+    actual_plain: The text appears nowhere.
+    status_note_plain: "Won't fix. Reason: the field is meant for private notes; we will relabel it so that is clear."
+    root_cause: CANARY-INTERNAL-D8 proposal.body is never rendered; only section.body is.
+
+notes:
+  - id: N1
+    client_facing: true
+    title_plain: The preview screen cannot make a PDF
+    body_plain: The PDF only exists after a proposal has been sent; the admin preview has no PDF option. This is how it is built, not a fault.
+    recommendation_plain: Mention it in any author guidance so nobody looks for a PDF button on the preview.
+
+screenshots:
+  - id: 1a
+    file: fail/screenshots/1a.png
+    group_plain: On-screen result
+    variant: Light
+    alt: The authored proposal in the light theme with its dark cover and four-figure strip
+    caption: Authored proposal, light theme
+    focal: top
+    visibility: client
+    pixels_clean: true
+  - id: 1b
+    file: fail/screenshots/1b.png
+    group_plain: On-screen result
+    variant: Dark
+    alt: The authored proposal in the dark theme with its diagram and roadmap sections
+    caption: Authored proposal, dark theme
+    focal: top
+    visibility: client
+    pixels_clean: true
+  - id: 1c
+    file: fail/screenshots/1c.png
+    group_plain: On-screen result
+    variant: Phone
+    alt: The authored proposal at phone width
+    caption: Authored proposal, phone width
+    focal: top
+    visibility: client
+    pixels_clean: true
+  - id: 2a
+    file: fail/screenshots/2a.png
+    group_plain: Downloaded PDF
+    variant: PDF
+    alt: First page of the downloaded PDF with a black website menu bar above the cover
+    caption: PDF, first page
+    focal: top
+    visibility: client
+    pixels_clean: true
+  - id: 2b
+    file: fail/screenshots/2b.png
+    group_plain: Downloaded PDF
+    variant: PDF
+    alt: Last page of the downloaded PDF showing the website footer links
+    caption: PDF, last page
+    focal: top
+    visibility: client
+    pixels_clean: true
+
+internal:
+  environment: CANARY-INT-1262 staging server https://app.example.test; Lead id 9003 (QAMOCK Sample Prospect), Proposal id 9004.
+  process_notes:
+    - CANARY-INTERNAL-PROCESS TRACKER-102, TRACKER-103 and TRACKER-104 were commented with repro detail; none were closed.
+  cleanup: CANARY-INTERNAL-CLEANUP Lead 9003 and Proposal 9004 destroyed via bin/rails runner.
+  sources: CANARY-INTERNAL-SOURCES QA/2026-10-01-TRACKER-102-pixel-for-pixel-proposal.md; main @ a1b2c3d.
