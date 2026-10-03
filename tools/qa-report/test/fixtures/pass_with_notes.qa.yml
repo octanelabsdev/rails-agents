@@ -1,0 +1,175 @@
+schema_version: 1
+card: TRACKER-101
+feature_title_plain: Proposal sections keep their order
+project_plain: Proposal builder
+tested_on: 2026-10-02
+environment_label: Pre-release test environment
+build_plain: "PR #101 · commit 1a2b3c4"
+
+summary:
+  lead: Everything we checked works. There are two things we want you to know about.
+  tested: >-
+    We created a sample proposal the way your connected tools do, with three sections, three phases, two option
+    groups and three summary figures. Then we opened it as an administrator, in the light theme and on a phone.
+  found: >-
+    Everything appeared in exactly the order it was sent, and editing a section and saving did not shuffle anything.
+    We found no issues.
+  means: >-
+    New proposals made by connected tools will read in the order you intended. Older proposals made before this fix
+    may still show sections in an unpredictable order (Note 1). We did not check the dark theme in this round (Note 2).
+  next: Nothing is needed from you. If you'd like older proposals tidied up, we can plan that as separate work.
+
+how_we_tested_plain: >-
+  We tested in a pre-release test environment that mirrors the live product but holds no real client data. We used a
+  sample proposal created just for this test and viewed it in the light theme and at phone width (390 px). The dark
+  theme was not covered in this round. The sample records were deleted afterwards, and the live product was not changed.
+
+requirements:
+  - id: R1
+    text_plain: Proposals created by a connected tool keep the order of their sections, phases, option groups and summary figures.
+    result: MET
+    journeys: [1, 2]
+  - id: R2
+    text_plain: Opening the proposal as an administrator shows all of those in the same order they were sent.
+    result: MET
+    journeys: [3, 4, 6]
+  - id: R3
+    text_plain: Extra ordering hints sent along with items are accepted without an error and do not change the order the items were sent in.
+    result: MET
+    journeys: [5]
+
+coverage:
+  columns: [Light, Dark, Phone (390 px)]
+  rows:
+    - area_plain: Proposal preview
+      cells: [PASS, NOT TESTED, PASS]
+    - area_plain: Roadmap section
+      cells: [PASS, NOT TESTED, PASS]
+    - area_plain: Older proposal (made before the fix)
+      cells: [NOT TESTED, NOT TESTED, OBSERVED]
+
+journeys:
+  - id: 1
+    title_plain: Create a proposal from a connected tool
+    description_plain: >-
+      A sample proposal with 3 sections, 3 phases, 2 option groups and 3 summary figures was sent in. Each kept the
+      order it was sent in.
+    result: PASS
+    evidence: []
+    evidence_note_plain: Confirmed in the saved proposal
+    technical_detail: >-
+      CANARY-INTERNAL-J1 POST /api/v1/leads/9002/proposals with Zebra, Apple, Mango -> 201 {"id":9005}; stored positions
+      with reorder(:id) 0,1,2.
+  - id: 2
+    title_plain: Edit a section and save
+    description_plain: We changed the label on the first section in the admin form and saved. The label updated and nothing moved.
+    result: PASS
+    evidence: []
+    evidence_note_plain: Confirmed in the saved proposal
+    technical_detail: CANARY-INTERNAL-J2 Edited section 1 part_label (now "Part Z edited"); positions unchanged 0,1,2.
+  - id: 3
+    title_plain: View the proposal as an administrator
+    description_plain: The preview lists the sections, summary figures and option groups in the order they were sent.
+    result: PASS
+    evidence: [1a, 1b]
+    technical_detail: CANARY-INTERNAL-J3 /admin/proposals/9005/preview renders Zebra -> Apple -> Mango (DOM offsets 327/358/389).
+  - id: 4
+    title_plain: Add a roadmap section
+    description_plain: We added a roadmap section in the admin screens. Its phases show in the order sent, and the new section sits last.
+    result: PASS
+    evidence: [2a, 2b]
+    technical_detail: CANARY-INTERNAL-J4 4th section "Roadmap Exhibit" (exhibit_type roadmap) stored at position 3.
+  - id: 5
+    title_plain: Send extra ordering hints
+    description_plain: Position numbers sent along with items cause no error and are not used; the sent order wins.
+    result: PASS
+    evidence: []
+    evidence_note_plain: Confirmed in the saved proposal
+    technical_detail: CANARY-INTERNAL-J5 POST with position inside sections (5, 1) -> 201; proposal 9006, deleted.
+  - id: 6
+    title_plain: Light and phone display
+    description_plain: >-
+      The preview looks right in the light theme and at 390 px wide, with no sideways scrolling. The dark theme was not
+      covered (Note 2).
+    result: PASS
+    evidence: [1a, 1b]
+    technical_detail: CANARY-INTERNAL-J6 scrollWidth 390 = viewport.
+  - id: 7
+    title_plain: Open an older proposal
+    description_plain: A proposal made before this fix still opens, but the order of its sections is not guaranteed (Note 1).
+    result: OBSERVED
+    evidence: [3a]
+    technical_detail: CANARY-INTERNAL-J7 Legacy proposal 9007 has all 5 sections stored at position 0.
+
+issues: []
+
+notes:
+  - id: N1
+    client_facing: true
+    title_plain: Older proposals may still show sections in an unpredictable order
+    body_plain: >-
+      Proposals created before this fix do not store an order for their sections, so they can appear in a different
+      order than they were written. New proposals are not affected.
+    recommendation_plain: A one-time clean-up of existing proposals when convenient. We can scope that separately.
+  - id: N2
+    client_facing: true
+    title_plain: The dark theme was not covered in this round
+    body_plain: >-
+      This round checked the light theme and phone width. We do not have a dark-theme capture to show, so we are not
+      claiming that it works.
+    recommendation_plain: Add a dark-theme check to the next round of testing.
+
+screenshots:
+  - id: 1a
+    file: pass_with_notes/screenshots/1a.png
+    group_plain: Proposal preview
+    variant: Light
+    alt: Proposal preview in the light theme listing the sections Zebra, Apple and Mango in that order
+    caption: Preview, light theme
+    focal: top
+    visibility: client
+    pixels_clean: true
+  - id: 1b
+    file: pass_with_notes/screenshots/1b.png
+    group_plain: Proposal preview
+    variant: Phone
+    alt: Proposal preview at phone width listing the sections Zebra, Apple and Mango in that order
+    caption: Preview, phone width
+    focal: top
+    visibility: client
+    pixels_clean: true
+  - id: 2a
+    file: pass_with_notes/screenshots/2a.png
+    group_plain: Roadmap section
+    variant: Light
+    alt: Roadmap section in the light theme listing phases Alpha, Bravo and Charlie
+    caption: Roadmap, light theme
+    focal: top
+    visibility: client
+    pixels_clean: true
+  - id: 2b
+    file: pass_with_notes/screenshots/2b.png
+    group_plain: Roadmap section
+    variant: Phone
+    alt: Roadmap section at phone width listing phases Alpha, Bravo and Charlie
+    caption: Roadmap, phone width
+    focal: top
+    visibility: client
+    pixels_clean: true
+  - id: 3a
+    file: pass_with_notes/screenshots/3a.png
+    group_plain: Older proposal
+    variant: Phone
+    alt: An older proposal at phone width showing its five numbered sections
+    caption: Older proposal, phone width
+    focal: top
+    visibility: client
+    pixels_clean: true
+
+internal:
+  environment: CANARY-INTERNAL-ENV staging server https://app.example.test (qa@example.com); ApiToken id 9001.
+  process_notes:
+    - CANARY-INTERNAL-PROCESS First payload used kind fixed and got 422 'fixed' is not a valid kind.
+    - CANARY-INTERNAL-PROCESS curl to *.test needed a sandbox bypass (loopback).
+  cleanup: CANARY-INTERNAL-CLEANUP Proposals 9005 and 9006 destroyed; ApiToken 9001 revoked; lead 9002 untouched.
+  sources: CANARY-INTERNAL-SOURCES QA/2026-10-02-TRACKER-101-composer-child-order.md; main @ 1a2b3c4, working tree clean.

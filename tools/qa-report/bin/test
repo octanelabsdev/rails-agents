@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+# Plain `ruby bin/test`, no Bundler, so every run also proves the stdlib-only contract.
+Dir[File.expand_path("../test/**/*_test.rb", __dir__)].sort.each do |file|
+  next if file.include?("/test/pending/")
+  require file
+end
