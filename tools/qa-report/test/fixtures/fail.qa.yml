@@ -289,7 +289,7 @@ screenshots:
     pixels_clean: true
 
 internal:
-  environment: CANARY-INT-1262 staging server https://app.example.test; Lead id 9003 (QAMOCK Sample Prospect), Proposal id 9004.
+  environment: CANARY-INT-FAIL staging server https://app.example.test; Lead id 9003 (QAMOCK Sample Prospect), Proposal id 9004.
   process_notes:
     - CANARY-INTERNAL-PROCESS TRACKER-102, TRACKER-103 and TRACKER-104 were commented with repro detail; none were closed.
   cleanup: CANARY-INTERNAL-CLEANUP Lead 9003 and Proposal 9004 destroyed via bin/rails runner.

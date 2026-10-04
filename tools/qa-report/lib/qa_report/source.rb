@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "date"
+require "digest"
 require "yaml"
 
 module QaReport
@@ -108,19 +109,23 @@ module QaReport
       "issues" => { "severity" => SEVERITIES, "status" => STATUSES }
     }.freeze
 
-    PLACEHOLDER_MESSAGE = "placeholder is not a key in the schema (owner decision 6: no placeholder screenshots " \
+    PLACEHOLDER_MESSAGE = "is not a key in the schema (owner decision 6: no placeholder screenshots " \
                           "in either variant; retake the capture)"
     PNG_SIGNATURE = "\x89PNG\r\n\x1A\n".b
     JPEG_SIGNATURE = "\xFF\xD8\xFF".b
     HEADER_BYTES = 12
 
-    attr_reader :data, :root
+    attr_reader :data, :root, :sha256
 
     def self.load(path)
-      new(YAML.safe_load_file(path, permitted_classes: [Date]), root: File.dirname(path))
+      new(YAML.safe_load_file(path, permitted_classes: [Date]), root: File.dirname(path),
+          sha256: Digest::SHA256.file(path).hexdigest)
     rescue SystemCallError, Psych::Exception => e
       raise InvalidSource, ["(file) #{path}: #{e.message}"]
     end
+
+    # The one rule that turns an authored id into a DOM id; the renderer uses it too, so the two cannot drift.
+    def self.slug(id) = id.to_s.downcase.gsub(/[^a-z0-9]+/, "-").gsub(/\A-|-\z/, "")
 
     def self.client_keys(kind) = SCHEMA.fetch(kind).select { |_, field| field.klass == :client }.keys
 
@@ -129,9 +134,10 @@ module QaReport
       "#{collection}[#{id.is_a?(String) || id.is_a?(Integer) ? id : index}]"
     end
 
-    def initialize(data, root:)
+    def initialize(data, root:, sha256: nil)
       @data = data
       @root = File.expand_path(root)
+      @sha256 = sha256
       problems = validate
       raise InvalidSource, problems unless problems.empty?
     end
@@ -259,8 +265,15 @@ module QaReport
 
     def check_duplicate_ids
       %w[requirements journeys issues notes screenshots].flat_map do |name|
-        @data[name].map { |item| item["id"] }.tally.select { |_, count| count > 1 }
-                   .map { |id, _| "#{name}[#{id}] has a duplicate id" }
+        slugs = @data[name].map { |item| Source.slug(item["id"]) }
+        @data[name].each_with_index.filter_map do |item, index|
+          label = Source.label(name, item, index)
+          if slugs[index].empty?
+            "#{label}.id must contain a letter or digit"
+          elsif slugs.count(slugs[index]) > 1
+            "#{label}.id duplicates another id once made into a page anchor"
+          end
+        end
       end
     end
 

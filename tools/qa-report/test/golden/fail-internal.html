@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QA report: Authoring a proposal that matches the approved design</title>
+<style>
+@font-face { font-family: "Test Sans"; font-style: normal; font-weight: 400; font-display: swap; src: url(data:font/woff2;base64,d09GMgABAABURVNULVNBTlMtTk9ULUEtUkVBTC1GT05U) format("woff2"); }
+:root { --font-sans: "Test Sans", system-ui, sans-serif; }
+@page { size: Letter; margin: 0.6in 0.6in 0.75in; @bottom-center { content: "Northwind Studio \00B7  QA report \00B7  Example Outfitters \00B7  Page " counter(page) " of " counter(pages); font: 400 8pt "Test Sans", system-ui, sans-serif; color: #545966; } }
+@page :first { @bottom-center { content: none; } }
+
+:root {
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --color-ink: #0F1115;
+  --brand-accent: #FF3D6E;
+  --brand-accent-deep: #E01050;
+  --color-steel-50: #F5F6F8; --color-steel-100: #E8EAEE; --color-steel-200: #D3D6DD; --color-steel-300: #AFB4C0;
+  --color-steel-400: #8A90A0; --color-steel-500: #6B7180; --color-steel-600: #545966; --color-steel-700: #3D414D;
+  --color-steel-800: #262933; --color-steel-900: #16181F;
+  --color-page: #F5F6F8;
+  --color-surface: #FFFFFF;
+  --doc-bg: #FFFFFF;
+  --color-border: #D3D6DD;
+  --color-border-strong: #8A90A0;
+  --color-text: #0F1115;
+  --color-text-muted: #6B7180;
+  --color-accent: #E01050;
+  --color-amber-100: #FEF3C7; --color-amber-800: #92400E;
+  --color-info-bg: #EFF6FF; --color-info-text: #0369A1;
+  --color-success-bg: #ECFDF5; --color-success-text: #047857;
+  --color-danger-bg: #FFF1F2; --color-danger-text: #BE123C;
+  --danger-solid-bg: #BE123C; --danger-solid-fg: #FFFFFF;
+  --color-cover-steel-200: #D3D6DD; --color-cover-steel-300: #AFB4C0; --color-cover-steel-400: #8A90A0;
+  --color-cover-success-bg: #052E23; --color-cover-success-text: #34D399;
+  --color-cover-notes-bg: #422E10; --color-cover-notes-text: #FBBF24;
+  --color-cover-danger-bg: #3A0D16; --color-cover-danger-text: #FB7185;
+  color-scheme: light;
+}
+@media screen and (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --color-steel-50: #14161C; --color-steel-100: #1C1F27; --color-steel-200: #2A2E38; --color-steel-300: #3C414D;
+    --color-steel-400: #6B7280; --color-steel-500: #9BA2AF; --color-steel-600: #AEB4C0; --color-steel-700: #C4C9D2;
+    --color-steel-800: #DADDE3; --color-steel-900: #EBEDF1;
+    --color-page: #0F1115; --color-surface: #181B22; --doc-bg: #0F1115;
+    --color-border: #666E7B; --color-border-strong: #7E8693;
+    --color-text: #E6E8ED; --color-text-muted: #9BA2AF; --color-accent: #FF3D6E;
+    --color-amber-100: #422E10; --color-amber-800: #FBBF24;
+    --color-info-bg: #0C2A3E; --color-info-text: #7DD3FC;
+    --color-success-bg: #052E23; --color-success-text: #34D399;
+    --color-danger-bg: #3A0D16; --color-danger-text: #FB7185;
+    --danger-solid-bg: #FB7185; --danger-solid-fg: #0F1115;
+  }
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+body { margin: 0; font-family: var(--font-sans); background: var(--doc-bg); color: var(--color-text); -webkit-font-smoothing: antialiased; }
+h1, h2, h3, h4, p, dl, dd, figure, ol, ul { margin: 0; }
+h1, h2, h3, h4 { font-family: var(--font-sans); }
+a { color: var(--color-accent); }
+svg { flex-shrink: 0; }
+:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+.cover :focus-visible { outline-color: var(--brand-accent); }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+[hidden] { display: none !important; }
+.muted { color: var(--color-text-muted); }
+
+.wrap { max-width: 48rem; margin-inline: auto; padding-inline: 1.25rem; }
+.wrap-wide { max-width: 64rem; margin-inline: auto; padding-inline: 1.25rem; }
+main > section { padding-block: 3rem; border-top: 1px solid var(--color-border); scroll-margin-top: 4rem; }
+@media (min-width: 640px) { main > section { padding-block: 4rem; } }
+main > section:first-child { border-top: none; }
+.eyebrow { display: block; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.14em; color: var(--color-accent); margin-bottom: 0.75rem; }
+h2.h2 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.01em; line-height: 1.25; }
+@media (min-width: 640px) { h2.h2 { font-size: 1.875rem; } }
+.h3 { font-size: 1.125rem; font-weight: 700; line-height: 1.4; }
+.body { font-size: 1rem; line-height: 1.75; color: var(--color-steel-800); max-width: 65ch; }
+.lead { font-size: 1.25rem; line-height: 2rem; font-weight: 700; color: var(--color-text); max-width: 40ch; }
+.card { border: 1px solid var(--color-border); border-radius: 0.75rem; background: var(--color-surface); padding: 1.25rem; }
+@media (min-width: 640px) { .card { padding: 1.5rem; } }
+.caption { font-size: 0.8125rem; line-height: 1.25rem; color: var(--color-text-muted); }
+.backlink { font-size: 0.8125rem; font-weight: 700; margin-left: 0.5rem; }
+
+.cover { background: var(--color-ink); color: #FFFFFF; padding-block: 3rem 2.5rem; border-bottom: 1px solid #2A2E38; }
+@media (min-width: 640px) { .cover { padding-block: 4rem 3.5rem; } }
+.cover .letterhead { margin-bottom: 2.25rem; }
+.cover .letterhead svg { height: 44px; width: auto; display: block; max-width: 100%; }
+.cover .eyebrow { color: var(--brand-accent); }
+.cover h1 { font-size: 2.25rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; overflow-wrap: break-word; }
+@media (min-width: 640px) { .cover h1 { font-size: 3rem; } }
+.cover h1 .lead-line { display: block; color: #FFFFFF; }
+.cover h1 .accent { color: var(--brand-accent); }
+.meta { margin-top: 1.75rem; display: grid; gap: 0.75rem; font-size: 0.9375rem; line-height: 1.5rem; }
+.meta > div { display: grid; gap: 0.15rem; }
+.meta dt { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-cover-steel-300); font-weight: 700; }
+.meta dd { color: #FFFFFF; font-weight: 700; display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; overflow-wrap: anywhere; }
+.meta dd .plain { font-weight: 400; color: var(--color-cover-steel-200); }
+@media (min-width: 640px) {
+  .meta > div { grid-template-columns: 8.5rem 1fr; gap: 1rem; align-items: center; }
+  .meta dt { font-size: 0.9375rem; text-transform: none; letter-spacing: 0; font-weight: 400; color: var(--color-cover-steel-200); }
+}
+.cover .letterhead svg.wm-print, .rule-print { display: none; }
+
+.verdict { margin-top: 2rem; display: flex; gap: 1rem; align-items: flex-start; border: 2px solid var(--v-fg); background: var(--v-bg); border-radius: 0.75rem; padding: 1.25rem; }
+@media (min-width: 640px) { .verdict { padding: 1.5rem; gap: 1.25rem; } }
+.verdict > svg { width: 28px; height: 28px; color: var(--v-fg); margin-top: 0.15rem; }
+.verdict .v-label { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.01em; text-transform: uppercase; color: var(--v-fg); line-height: 1.2; }
+@media (min-width: 640px) { .verdict .v-label { font-size: 1.875rem; } }
+.verdict .v-exp { font-size: 1rem; line-height: 1.75rem; color: #FFFFFF; margin-top: 0.35rem; }
+.v-pass { --v-bg: var(--color-cover-success-bg); --v-fg: var(--color-cover-success-text); --v-print: #047857; }
+.v-notes { --v-bg: var(--color-cover-notes-bg); --v-fg: var(--color-cover-notes-text); --v-print: #92400E; }
+.v-fail { --v-bg: var(--color-cover-danger-bg); --v-fg: var(--color-cover-danger-text); --v-print: #BE123C; }
+
+.stat-strip { list-style: none; padding: 0; margin: 2.25rem 0 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem 1rem; }
+.stat-strip .stat { border-top: 2px solid var(--brand-accent); padding-top: 0.6rem; min-width: 0; }
+.stat-strip .value { font-size: 1.375rem; line-height: 1.75rem; font-weight: 800; font-variant-numeric: tabular-nums; color: #FFFFFF; overflow-wrap: anywhere; }
+.stat-strip .label { font-size: 0.75rem; color: var(--color-cover-steel-300); margin-top: 0.15rem; }
+.stat-strip .note { font-size: 0.6875rem; line-height: 1rem; color: var(--color-cover-steel-400); margin-top: 0.1rem; }
+
+.g { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+.badge { display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.125rem 0.625rem; border-radius: 999px; border: 1px solid var(--b-fg); background: var(--b-bg); color: var(--b-fg); font-size: 0.75rem; line-height: 1.25rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; }
+.t-success { --b-bg: var(--color-success-bg); --b-fg: var(--color-success-text); }
+.t-danger { --b-bg: var(--color-danger-bg); --b-fg: var(--color-danger-text); }
+.t-solid { --b-bg: var(--danger-solid-bg); --b-fg: var(--danger-solid-fg); border-color: var(--danger-solid-bg); }
+.t-notes { --b-bg: var(--color-amber-100); --b-fg: var(--color-amber-800); }
+.t-info { --b-bg: var(--color-info-bg); --b-fg: var(--color-info-text); }
+.t-neutral { --b-bg: var(--color-steel-100); --b-fg: var(--color-steel-700); border-color: var(--color-border-strong); }
+.t-blocked { --b-bg: var(--color-steel-100); --b-fg: var(--color-steel-700); border-style: dashed; border-color: var(--color-border-strong); }
+.t-status { --b-bg: transparent; --b-fg: var(--color-steel-700); border-color: var(--color-border-strong); }
+.t-status.s-verified { --b-fg: var(--color-success-text); border-color: var(--color-success-text); }
+.cell { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.8125rem; font-weight: 700; white-space: nowrap; color: var(--b-fg); }
+.cell .g { width: 16px; height: 16px; }
+.cell.t-neutral, .cell.t-blocked { --b-fg: var(--color-steel-600); }
+.badges { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; }
+
+.contents-sec { padding-block: 2.5rem 0; }
+.toc { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.25rem; }
+.toc a { text-decoration: none; color: var(--color-text); display: flex; gap: 1rem; padding: 0.5rem 0; min-height: 2.75rem; align-items: center; border-bottom: 1px dotted var(--color-border); font-size: 0.9375rem; }
+.toc a .num { color: var(--color-text-muted); font-variant-numeric: tabular-nums; width: 2.5rem; flex-shrink: 0; }
+.toc a:hover span:last-child { text-decoration: underline; }
+details.toc-mobile { display: none; }
+details.toc-mobile summary { font-weight: 700; cursor: pointer; min-height: 2.75rem; display: flex; align-items: center; }
+details.toc-mobile .toc { margin-top: 0.5rem; }
+
+.sum-grid { display: grid; gap: 1.25rem 2rem; grid-template-columns: 1fr 1fr; margin-top: 1.75rem; }
+.sum-grid h3 { margin-bottom: 0.35rem; }
+.sum-grid p { font-size: 1rem; line-height: 1.75rem; color: var(--color-steel-800); }
+.sum-grid p + p { margin-top: 0.75rem; }
+
+ol.reqs { list-style: none; padding: 0; display: grid; gap: 0.75rem; counter-reset: req; }
+ol.reqs li { counter-increment: req; display: grid; grid-template-columns: auto 1fr; gap: 0.5rem 1rem; align-items: start; border: 1px solid var(--color-border); border-radius: 0.75rem; padding: 0.9rem 1rem; background: var(--color-surface); }
+ol.reqs li .req-text { font-size: 0.9375rem; line-height: 1.5rem; color: var(--color-text); }
+ol.reqs li .req-text::before { content: counter(req) ". "; font-weight: 800; font-variant-numeric: tabular-nums; }
+ol.reqs li .req-ref { grid-column: 2; font-size: 0.8125rem; color: var(--color-text-muted); }
+ol.reqs li .req-ref a { font-weight: 700; }
+ol.reqs li.is-fail { border-left: 4px solid var(--color-danger-text); }
+.scroll-region { overflow-x: auto; border: 1px solid var(--color-border); border-radius: 0.75rem; background: linear-gradient(to right, var(--color-surface) 30%, transparent) 0 0 / 2rem 100% no-repeat local, linear-gradient(to left, var(--color-surface) 30%, transparent) 100% 0 / 2rem 100% no-repeat local, linear-gradient(to right, rgba(107,113,128,0.25), transparent) 0 0 / 0.75rem 100% no-repeat scroll, linear-gradient(to left, rgba(107,113,128,0.25), transparent) 100% 0 / 0.75rem 100% no-repeat scroll; }
+table { width: 100%; border-collapse: collapse; font-size: 0.9375rem; line-height: 1.5rem; }
+th, td { text-align: left; padding: 0.65rem 0.85rem; border-bottom: 1px solid var(--color-border); vertical-align: top; }
+tbody tr:last-child > * { border-bottom: none; }
+thead th { font-size: 0.7rem; line-height: 1rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-muted); font-weight: 700; border-bottom: 2px solid var(--color-border-strong); white-space: nowrap; }
+table.matrix tbody th { font-weight: 700; position: sticky; left: 0; background: var(--color-surface); min-width: 9.5rem; }
+table.matrix td { white-space: nowrap; }
+caption { text-align: left; }
+
+.j-wrap { border: 1px solid var(--color-border); border-radius: 0.75rem; overflow: hidden; }
+table.j-table th.c-num, table.j-table td.c-num { width: 2.5rem; font-variant-numeric: tabular-nums; font-weight: 800; color: var(--color-text-muted); }
+table.j-table .title { font-weight: 700; display: block; }
+table.j-table .desc { display: block; color: var(--color-text-muted); font-size: 0.875rem; line-height: 1.4rem; margin-top: 0.15rem; max-width: 52ch; }
+table.j-table td.c-ev { font-size: 0.875rem; }
+table.j-table tr.is-fail > td:first-child, table.j-table tr.is-fail > th:first-child { box-shadow: inset 4px 0 0 var(--color-danger-text); }
+.ev-list { display: flex; flex-wrap: wrap; gap: 0.15rem 0.75rem; }
+.ev-list a { font-weight: 700; display: inline-flex; align-items: center; min-height: 1.75rem; }
+.ev-none { color: var(--color-text-muted); }
+
+footer.doc-footer { border-top: 1px solid var(--color-border); padding-block: 2.5rem; font-size: 0.875rem; line-height: 1.5rem; color: var(--color-text-muted); overflow-wrap: anywhere; }
+footer.doc-footer .brandrow { display: flex; gap: 0.75rem; align-items: center; color: var(--color-text); }
+footer.doc-footer p + p { margin-top: 0.5rem; }
+footer.doc-footer .stamp { font-family: var(--font-mono); font-size: 0.75rem; }
+
+@media screen and (max-width: 767px) {
+  .j-wrap { border: none; border-radius: 0; overflow: visible; }
+  table.j-table, table.j-table tbody { display: block; }
+  table.j-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+  table.j-table tr { display: grid; grid-template-columns: 1fr auto; gap: 0.5rem 0.75rem; align-items: center; border: 1px solid var(--color-border); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1rem; background: var(--color-surface); }
+  table.j-table td { display: block; border: none; padding: 0; width: auto; }
+  table.j-table td.c-num { grid-column: 1; grid-row: 1; width: auto; font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; }
+  table.j-table td.c-num::before { content: "Journey "; }
+  table.j-table td.c-res { grid-column: 2; grid-row: 1; justify-self: end; }
+  table.j-table td.c-what { grid-column: 1 / -1; }
+  table.j-table td.c-ev { grid-column: 1 / -1; }
+  table.j-table td.c-ev::before { content: attr(data-label); display: block; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-muted); font-weight: 700; margin-bottom: 0.15rem; }
+  table.j-table tr.is-fail { box-shadow: inset 4px 0 0 var(--color-danger-text); }
+  table.j-table tr.is-fail > td:first-child { box-shadow: none; }
+}
+@media screen and (max-width: 639px) {
+  .stat-strip { grid-template-columns: repeat(2, 1fr); }
+  .sum-grid { grid-template-columns: 1fr; }
+  ul.toc.desk { display: none; }
+  details.toc-mobile { display: block; }
+  table.matrix td .w { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+  .verdict { flex-direction: column; gap: 0.6rem; }
+}
+
+@media print {
+  :root {
+    color-scheme: light;
+    --color-steel-50: #F5F6F8; --color-steel-100: #E8EAEE; --color-steel-200: #D3D6DD; --color-steel-300: #AFB4C0;
+    --color-steel-400: #8A90A0; --color-steel-500: #6B7180; --color-steel-600: #545966; --color-steel-700: #3D414D;
+    --color-steel-800: #262933; --color-steel-900: #16181F;
+    --color-page: #FFFFFF; --color-surface: #FFFFFF; --doc-bg: #FFFFFF;
+    --color-border: #D3D6DD; --color-border-strong: #8A90A0;
+    --color-text: #0F1115; --color-text-muted: #545966; --color-accent: #E01050;
+    --color-amber-100: #FEF3C7; --color-amber-800: #92400E;
+    --color-info-bg: #EFF6FF; --color-info-text: #0369A1;
+    --color-success-bg: #ECFDF5; --color-success-text: #047857;
+    --color-danger-bg: #FFF1F2; --color-danger-text: #BE123C;
+    --danger-solid-bg: #BE123C; --danger-solid-fg: #FFFFFF;
+  }
+  html { background: #FFFFFF; font-size: 14px; }
+  .contents-sec, dialog, .chip-x, .flags, .vchip, .backlink, .no-print { display: none !important; }
+  body { font-size: 1rem; }
+  .wrap, .wrap-wide { max-width: none; padding-inline: 0; }
+  main > section { padding-block: 1.2rem; border-top: none; }
+  main > section:first-child { padding-top: 0.75rem; }
+  main > section.pb { break-before: page; }
+  .eyebrow, h2, h3, h4, .issue-head { break-after: avoid; }
+  p, li { orphans: 3; widows: 3; }
+  .sec-head { break-inside: avoid; break-after: avoid; }
+  .sec-head + * { break-before: avoid; }
+  .sec-head + .body { break-after: avoid; }
+  .sec-head + .body + .shot-group { break-before: avoid; }
+  .caption, .shot-group > h3 { break-after: avoid; }
+  .exp-act, .status-line { break-inside: avoid; }
+  th, td { padding: 0.4rem 0.6rem; }
+  .eyebrow { color: var(--color-steel-700); margin-bottom: 0.4rem; }
+  .eyebrow::after { content: ""; display: block; height: 2px; width: 2rem; background: var(--brand-accent-deep); margin-top: 0.3rem; }
+  a { color: #0F1115; text-decoration: underline; text-decoration-color: var(--color-border-strong); }
+  h2.h2 { font-size: 1.3rem; }
+  .lead { font-size: 1.05rem; line-height: 1.5rem; margin-top: 0.6rem !important; }
+  .body, .sum-grid p { font-size: 0.9rem; line-height: 1.4rem; }
+  .sum-grid { gap: 0.6rem 1.5rem; margin-top: 0.7rem; }
+  .sum-grid > div { break-inside: avoid; }
+  .sum-grid h3 { font-size: 0.95rem; margin-bottom: 0.15rem; }
+  .cover { background: #FFFFFF; color: #0F1115; padding-block: 0 0.75rem; border-bottom: 1px solid var(--color-border); }
+  .cover .letterhead { margin-bottom: 0.6rem; }
+  .cover .letterhead svg { height: 30px; }
+  .cover .letterhead svg.wm-screen { display: none; }
+  .cover .letterhead svg.wm-print { display: block; }
+  .rule-print { display: block; height: 3px; width: 3rem; background: var(--brand-accent-deep); margin-bottom: 0.6rem; }
+  .cover .eyebrow { color: var(--color-steel-700); margin-bottom: 0.25rem; }
+  .cover .eyebrow::after { display: none; }
+  .cover h1 { font-size: 1.7rem; line-height: 1.12; }
+  .cover h1 .lead-line { color: #0F1115; }
+  .cover h1 .accent { color: var(--brand-accent-deep); }
+  .meta { margin-top: 0.6rem; gap: 0.15rem; font-size: 0.85rem; line-height: 1.25rem; }
+  .meta > div { grid-template-columns: 7rem 1fr; gap: 0.5rem; }
+  .meta dt { font-size: 0.85rem; text-transform: none; letter-spacing: 0; font-weight: 400; color: var(--color-steel-600); }
+  .meta dd { color: #0F1115; }
+  .meta dd .plain { color: var(--color-steel-600); }
+  .verdict { margin-top: 0.7rem; background: #FFFFFF; border: 2px solid var(--v-print); padding: 0.55rem 0.9rem; gap: 0.7rem; break-inside: avoid; }
+  .verdict > svg, .verdict .v-label { color: var(--v-print); }
+  .verdict > svg { width: 22px; height: 22px; }
+  .verdict .v-label { font-size: 1.2rem; }
+  .verdict .v-exp { color: #0F1115; margin-top: 0.1rem; line-height: 1.3rem; font-size: 0.85rem; }
+  .stat-strip { grid-template-columns: repeat(4, 1fr); margin-top: 0.7rem; gap: 0.5rem 0.75rem; }
+  .stat-strip .stat { border-top: 2px solid var(--brand-accent-deep); padding-top: 0.3rem; }
+  .stat-strip .value { color: #0F1115; font-size: 1rem; line-height: 1.3rem; }
+  .stat-strip .label { color: var(--color-steel-600); font-size: 0.7rem; }
+  .stat-strip .note { color: var(--color-steel-600); font-size: 0.65rem; line-height: 0.9rem; }
+  .badge { background: transparent; }
+  .t-solid { color: var(--color-danger-text); border: 2px solid var(--color-danger-text); }
+  .t-status.s-verified { background: transparent; }
+  .card, ol.reqs li, figure, tr, .zero, .key { break-inside: avoid; }
+  .j-wrap, .scroll-region { break-inside: auto; }
+  .issue { break-inside: avoid; }
+  .scroll-region { background: none; overflow: visible; }
+  table.matrix tbody th { position: static; }
+  thead { display: table-header-group; }
+  footer.doc-footer { padding-block: 0.9rem; break-inside: avoid; break-before: avoid; }
+}
+
+</style>
+<!--int--><style>
+.banner-int { display: flex; gap: 0.75rem; align-items: flex-start; justify-content: center; background: var(--color-amber-100); color: var(--color-amber-800); border-bottom: 2px solid var(--color-amber-800); padding: 0.75rem 1.25rem; font-size: 0.875rem; line-height: 1.4rem; font-weight: 700; }
+.banner-int p { max-width: 64rem; overflow-wrap: anywhere; }
+.banner-int .sub { font-weight: 400; }
+.banner-int a { color: inherit; }
+.int-link { font-size: 0.8125rem; font-weight: 700; color: var(--color-amber-800); display: inline-block; margin-top: 0.25rem; }
+@media print {
+  .banner-int, .int-link { display: none !important; }
+  body { page: internal; }
+}
+@page internal { @top-center { content: "INTERNAL \2014  NOT FOR CLIENT DISTRIBUTION"; font: 800 8pt system-ui, sans-serif; color: #92400E; } }
+</style><!--/int-->
+</head>
+<body>
+<!--int--><div class="banner-int" role="note"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false" style="width:18px;height:18px;margin-top:0.2rem"><use href="#g-triangle"/></svg><p>INTERNAL — contains operational detail. Do not send to the client. <span class="sub">Client version: <a href="example-outfitters-qa-report.html">example-outfitters-qa-report.html</a></span></p></div>
+<!--/int-->
+<header class="cover">
+ <div class="wrap">
+  <div class="letterhead"><svg xmlns="http://www.w3.org/2000/svg" class="wm-screen" viewBox="10 20 330 60" role="img" aria-label="Northwind Studio"><text x="20" y="70" font-family="Test Sans" font-size="48" fill="#FFFFFF">NORTHWIND</text><rect x="300" y="30" width="4" height="40" rx="2" fill="#2A9D8F"/></svg><svg xmlns="http://www.w3.org/2000/svg" class="wm-print" viewBox="10 20 330 60" aria-hidden="true"><text x="20" y="70" font-family="Test Sans" font-size="48" fill="#101820">NORTHWIND</text><rect x="300" y="30" width="4" height="40" rx="2" fill="#1F7A70"/></svg></div>
+  <div class="rule-print"></div>
+  <p class="eyebrow">QA report<!--int--><span> · CARD #TRACKER-102</span><!--/int--></p>
+  <h1 id="title"><span class="lead-line">Acceptance QA:</span> <span class="accent">Authoring a proposal that matches the approved design</span></h1>
+  <dl class="meta">
+   <div><dt>Prepared for</dt><dd>Example Outfitters</dd></div>
+   <div><dt>Project</dt><dd>Proposal builder</dd></div>
+   <div><dt>Tested</dt><dd>October 1, 2026<span class="plain">Pre-release test environment</span></dd></div>
+   <div><dt>Build</dt><dd>commit a1b2c3d</dd></div>
+  </dl>
+  <div class="verdict v-fail" role="group" aria-label="Verdict">
+   <svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-x"/></svg>
+   <div><p class="v-label">Fail</p><p class="v-exp">Not ready yet. 4 issues are still open, including 3 major ones. 1 major fix is waiting to be re-tested. 8 of 15 requirements are met.</p></div>
+  </div>
+  <ul class="stat-strip" role="list">
+   <li class="stat"><div class="value">8 of 15</div><div class="label">Requirements met</div><div class="note">7 not met</div></li>
+   <li class="stat"><div class="value">4 of 10</div><div class="label">Journeys passed</div><div class="note">5 failed · 1 blocked</div></li>
+   <li class="stat"><div class="value">4</div><div class="label">Open issues</div><div class="note">8 found · 2 fixed</div></li>
+   <li class="stat"><div class="value">Light · Dark · PDF</div><div class="label">Tested on</div></li>
+  </ul>
+ </div>
+</header>
+<section class="contents-sec">
+ <div class="wrap"><nav aria-label="Contents">
+  <h2 class="h3" style="margin-bottom:0.5rem">Contents</h2>
+  <ul class="toc desk"><li><a href="#summary"><span class="num">01</span><span>Summary</span></a></li><li><a href="#checked"><span class="num">02</span><span>What we checked</span></a></li><li><a href="#journeys"><span class="num">03</span><span>Journeys</span></a></li></ul>
+  <details class="toc-mobile"><summary>On this page</summary><ul class="toc"><li><a href="#summary"><span class="num">01</span><span>Summary</span></a></li><li><a href="#checked"><span class="num">02</span><span>What we checked</span></a></li><li><a href="#journeys"><span class="num">03</span><span>Journeys</span></a></li></ul></details>
+ </nav></div></section>
+<main>
+<section id="summary" aria-labelledby="h-summary">
+ <div class="wrap"><div class="sec-head"><span class="eyebrow">01 · Summary</span><h2 class="h2"><span id="h-summary">Not ready yet, and here is why</span></h2></div>
+  <p class="lead" style="margin-top:1rem">We found problems that need fixing before this is ready.</p>
+  <div class="sum-grid">
+   <div><h3 class="h3">What we tested</h3><p>We built a full sample proposal using only the admin screens, then compared what came out with the approved design on screen, in light and dark themes, and as a downloaded PDF.</p></div>
+   <div><h3 class="h3">What we found</h3><p>The look of the cover, option cards, roadmap, tables and printed cover all match. But we found 8 issues: one blocker (a crash, now fixed), five major issues and two minor ones. 4 are still open.</p></div>
+   <div><h3 class="h3">What it means for you</h3><p>Right now a proposal cannot be authored end to end so that it matches the approved design, and the PDF is not clean enough to send to a client.</p></div>
+   <div><h3 class="h3">What happens next</h3><p>We are fixing the open issues and will re-test them. We will send an updated report when the major issues are verified.</p></div>
+  </div>
+ </div></section>
+<section id="checked" class="pb" aria-labelledby="h-checked">
+ <div class="wrap"><div class="sec-head"><span class="eyebrow">02 · What we checked</span><h2 class="h2"><span id="h-checked">15 requirements, 8 met</span></h2></div>
+  <p class="body" style="margin-top:1rem">These are the things this piece of work was meant to deliver. Each one was checked on its own.</p>
+  <h3 class="h3" style="margin-top:1.75rem;margin-bottom:0.85rem">Requirements</h3>
+  <ol class="reqs">
+   <li><span class="badge t-success"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-check"/></svg><span>Met</span></span><span class="req-text">The four-figure strip on the cover matches the design.</span><span class="req-ref">Journey <a href="#j-1">1</a></span></li>
+   <li><span class="badge t-success"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-check"/></svg><span>Met</span></span><span class="req-text">The three Discovery option cards, the recommended badge and the price range match the design.</span><span class="req-ref">Journey <a href="#j-1">1</a></span></li>
+   <li><span class="badge t-success"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-check"/></svg><span>Met</span></span><span class="req-text">The roadmap section (bands, gates, priced rows, Build total) matches the design.</span><span class="req-ref">Journey <a href="#j-5">5</a></span></li>
+   <li><span class="badge t-success"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-check"/></svg><span>Met</span></span><span class="req-text">The diagram section looks right on screen in both themes.</span><span class="req-ref">Journey <a href="#j-5">5</a></span></li>
+   <li><span class="badge t-success"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-check"/></svg><span>Met</span></span><span class="req-text">The Build table and its total add up correctly.</span><span class="req-ref">Journey <a href="#j-1">1</a></span></li>
+   <li><span class="badge t-success"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-check"/></svg><span>Met</span></span><span class="req-text">The Part A / B / C section dividers match the design.</span><span class="req-ref">Journey <a href="#j-5">5</a></span></li>
+   <li><span class="badge t-success"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-check"/></svg><span>Met</span></span><span class="req-text">Light and dark themes work, and the cover stays dark in both.</span><span class="req-ref">Journey <a href="#j-6">6</a></span></li>
+   <li><span class="badge t-success"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-check"/></svg><span>Met</span></span><span class="req-text">The printed cover is light, with the light logo and a magenta rule.</span><span class="req-ref">Journey <a href="#j-9">9</a></span></li>
+   <li><span class="badge t-danger"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-x"/></svg><span>Not met</span></span><span class="req-text">The cover headline and the label above it can be set by an author.</span><span class="req-ref">Journey <a href="#j-2">2</a></span></li>
+   <li><span class="badge t-danger"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-x"/></svg><span>Not met</span></span><span class="req-text">The proposal has a Contents list.</span><span class="req-ref">Journey <a href="#j-10">10</a></span></li>
+   <li><span class="badge t-danger"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-x"/></svg><span>Not met</span></span><span class="req-text">Section headings match the design.</span><span class="req-ref">Journey <a href="#j-7">7</a></span></li>
+   <li><span class="badge t-danger"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-x"/></svg><span>Not met</span></span><span class="req-text">The New proposal screen handles mistakes without crashing.</span><span class="req-ref">Journey <a href="#j-4">4</a></span></li>
+   <li><span class="badge t-danger"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-x"/></svg><span>Not met</span></span><span class="req-text">The diagram image appears in the downloaded PDF.</span><span class="req-ref">Journey <a href="#j-8">8</a></span></li>
+   <li><span class="badge t-danger"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-x"/></svg><span>Not met</span></span><span class="req-text">The PDF contains only the proposal.</span><span class="req-ref">Journey <a href="#j-8">8</a></span></li>
+   <li><span class="badge t-danger"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-x"/></svg><span>Not met</span></span><span class="req-text">Phases, option groups and line items can be added together on the New proposal screen</span><span class="req-ref">Journey <a href="#j-3">3</a></span></li>
+  </ol>
+  <h3 class="h3" style="margin-top:2rem;margin-bottom:0.85rem">Where we checked</h3>
+  <div class="scroll-region" tabindex="0" role="region" aria-label="Coverage matrix; scrolls sideways on small screens">
+   <table class="matrix"><caption class="sr-only">Coverage matrix: result for each area in each viewing mode</caption>
+   <thead><tr><th scope="col">Area</th><th scope="col">Light</th><th scope="col">Dark</th><th scope="col">PDF</th></tr></thead>
+   <tbody>
+    <tr><th scope="row">Cover and summary figures</th><td><span class="cell t-success"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-check"/></svg><span class="w">Pass</span></span></td><td><span class="cell t-success"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-check"/></svg><span class="w">Pass</span></span></td><td><span class="cell t-success"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-check"/></svg><span class="w">Pass</span></span></td></tr>
+    <tr><th scope="row">Option cards and roadmap</th><td><span class="cell t-success"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-check"/></svg><span class="w">Pass</span></span></td><td><span class="cell t-success"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-check"/></svg><span class="w">Pass</span></span></td><td><span class="cell t-neutral"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-dash"/></svg><span class="w">Not tested</span></span></td></tr>
+    <tr><th scope="row">Diagram section</th><td><span class="cell t-success"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-check"/></svg><span class="w">Pass</span></span></td><td><span class="cell t-success"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-check"/></svg><span class="w">Pass</span></span></td><td><span class="cell t-danger"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-x"/></svg><span class="w">Fail</span></span></td></tr>
+    <tr><th scope="row">Page layout of the PDF</th><td><span class="cell t-neutral"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-dash"/></svg><span class="w">Not tested</span></span></td><td><span class="cell t-neutral"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-dash"/></svg><span class="w">Not tested</span></span></td><td><span class="cell t-danger"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-x"/></svg><span class="w">Fail</span></span></td></tr>
+   </tbody></table>
+  </div>
+ </div></section>
+<section id="journeys" class="pb" aria-labelledby="h-journeys">
+ <div class="wrap"><div class="sec-head"><span class="eyebrow">03 · Journeys</span><h2 class="h2"><span id="h-journeys">10 journeys, 4 passed and 6 did not</span></h2></div>
+  <p class="body" style="margin-top:1rem">A journey is one thing a person would actually do with the product, from start to finish.</p></div>
+ <div class="wrap-wide" style="margin-top:1.75rem"><div class="j-wrap">
+  <table class="j-table" role="table"><caption class="sr-only">Journeys we walked through, with result and evidence</caption>
+  <thead role="rowgroup"><tr role="row"><th scope="col" role="columnheader" class="c-num">#</th><th scope="col" role="columnheader">What we checked</th><th scope="col" role="columnheader">Result</th><th scope="col" role="columnheader">Evidence</th></tr></thead>
+  <tbody role="rowgroup">
+   <tr id="j-1" role="row"><td class="c-num" role="cell">1</td><td class="c-what" role="cell"><span class="title">Set up the proposal in steps</span><span class="desc">Over several saves, entered the dates, cover figures, phases, option cards and line items.</span><!--int--><a class="int-link" href="#a-j-1" style="display:block">Technical detail ↓</a><!--/int--></td><td class="c-res" role="cell" data-label="Result"><span class="badge t-success"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-check"/></svg><span>Pass</span></span></td><td class="c-ev" role="cell" data-label="Evidence"><span class="ev-list"><a href="#shot-1a">Screenshot 1a</a></span></td></tr>
+   <tr id="j-2" class="is-fail" role="row"><td class="c-num" role="cell">2</td><td class="c-what" role="cell"><span class="title">Give the proposal a headline and label</span><span class="desc">Looked for a way to set the cover headline and the label above it.</span><!--int--><a class="int-link" href="#a-j-2" style="display:block">Technical detail ↓</a><!--/int--></td><td class="c-res" role="cell" data-label="Result"><span class="badge t-danger"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-x"/></svg><span>Fail</span></span></td><td class="c-ev" role="cell" data-label="Evidence"><span class="ev-none">No headline field exists to capture</span></td></tr>
+   <tr id="j-3" class="is-fail" role="row"><td class="c-num" role="cell">3</td><td class="c-what" role="cell"><span class="title">Add phases, option groups and line items in one pass</span><span class="desc">Added them all on the New proposal screen before the first save.</span><!--int--><a class="int-link" href="#a-j-3" style="display:block">Technical detail ↓</a><!--/int--></td><td class="c-res" role="cell" data-label="Result"><span class="badge t-danger"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-x"/></svg><span>Fail</span></span></td><td class="c-ev" role="cell" data-label="Evidence"><span class="ev-none">Checked directly; no screenshot</span></td></tr>
+   <tr id="j-4" class="is-fail" role="row"><td class="c-num" role="cell">4</td><td class="c-what" role="cell"><span class="title">Add a diagram image on a new proposal</span><span class="desc">Attached an image to a new proposal that also had a form mistake, then saved.</span><!--int--><a class="int-link" href="#a-j-4" style="display:block">Technical detail ↓</a><!--/int--></td><td class="c-res" role="cell" data-label="Result"><span class="badge t-danger"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-x"/></svg><span>Fail</span></span></td><td class="c-ev" role="cell" data-label="Evidence"><span class="ev-none">Ended on an error page</span></td></tr>
+   <tr id="j-5" role="row"><td class="c-num" role="cell">5</td><td class="c-what" role="cell"><span class="title">Add diagram, roadmap and written sections</span><span class="desc">Added them in steps and previewed the result.</span><!--int--><a class="int-link" href="#a-j-5" style="display:block">Technical detail ↓</a><!--/int--></td><td class="c-res" role="cell" data-label="Result"><span class="badge t-success"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-check"/></svg><span>Pass</span></span></td><td class="c-ev" role="cell" data-label="Evidence"><span class="ev-list"><a href="#shot-1b">Screenshot 1b</a></span></td></tr>
+   <tr id="j-6" role="row"><td class="c-num" role="cell">6</td><td class="c-what" role="cell"><span class="title">Preview in light and dark</span><span class="desc">Switched themes in the preview; the cover stayed dark in both.</span><!--int--><a class="int-link" href="#a-j-6" style="display:block">Technical detail ↓</a><!--/int--></td><td class="c-res" role="cell" data-label="Result"><span class="badge t-success"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-check"/></svg><span>Pass</span></span></td><td class="c-ev" role="cell" data-label="Evidence"><span class="ev-list"><a href="#shot-1a">Screenshot 1a</a><a href="#shot-1b">Screenshot 1b</a><a href="#shot-1c">Screenshot 1c</a></span></td></tr>
+   <tr id="j-7" class="is-fail" role="row"><td class="c-num" role="cell">7</td><td class="c-what" role="cell"><span class="title">Compare section headings with the design</span><span class="desc">Checked each section heading against the approved design.</span><!--int--><a class="int-link" href="#a-j-7" style="display:block">Technical detail ↓</a><!--/int--></td><td class="c-res" role="cell" data-label="Result"><span class="badge t-danger"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-x"/></svg><span>Fail</span></span></td><td class="c-ev" role="cell" data-label="Evidence"><span class="ev-list"><a href="#shot-1a">Screenshot 1a</a></span></td></tr>
+   <tr id="j-8" class="is-fail" role="row"><td class="c-num" role="cell">8</td><td class="c-what" role="cell"><span class="title">Download the proposal as a PDF</span><span class="desc">Sent the proposal, downloaded the PDF and checked every page.</span><!--int--><a class="int-link" href="#a-j-8" style="display:block">Technical detail ↓</a><!--/int--></td><td class="c-res" role="cell" data-label="Result"><span class="badge t-danger"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-x"/></svg><span>Fail</span></span></td><td class="c-ev" role="cell" data-label="Evidence"><span class="ev-list"><a href="#shot-2a">Screenshot 2a</a><a href="#shot-2b">Screenshot 2b</a></span></td></tr>
+   <tr id="j-9" role="row"><td class="c-num" role="cell">9</td><td class="c-what" role="cell"><span class="title">Check the printed cover</span><span class="desc">Looked at the cover page of the downloaded PDF.</span><!--int--><a class="int-link" href="#a-j-9" style="display:block">Technical detail ↓</a><!--/int--></td><td class="c-res" role="cell" data-label="Result"><span class="badge t-success"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-check"/></svg><span>Pass</span></span></td><td class="c-ev" role="cell" data-label="Evidence"><span class="ev-list"><a href="#shot-2a">Screenshot 2a</a></span></td></tr>
+   <tr id="j-10" role="row"><td class="c-num" role="cell">10</td><td class="c-what" role="cell"><span class="title">Use the Contents list</span><span class="desc">Could not be tried: there is no Contents list in this build.</span><!--int--><a class="int-link" href="#a-j-10" style="display:block">Technical detail ↓</a><!--/int--></td><td class="c-res" role="cell" data-label="Result"><span class="badge t-blocked"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-blocked"/></svg><span>Blocked</span></span></td><td class="c-ev" role="cell" data-label="Evidence"><span class="ev-none">Could not be tried</span></td></tr>
+  </tbody></table>
+ </div></div></section>
+</main>
+<footer class="doc-footer"><div class="wrap">
+ <p class="brandrow"><span>Prepared by <strong>Northwind Studio</strong></span></p>
+ <p>Contact: <a href="mailto:hello@example.com">hello@example.com</a></p>
+ <p>Confidential — prepared for Example Outfitters as part of our engagement. Please share only within your team.</p>
+ <!--int--><p class="stamp">Internal build · source sha256 ed8345a8874e68533bd0ae7ca8c57e0aad8dd29f3dd9586c4cbb46a48b5464ca · schema version 1</p><!--/int-->
+</div></footer>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<symbol id="g-check" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.25"/><path d="M5 8.3 7.2 10.5 11 5.8"/></symbol>
+<symbol id="g-notes" viewBox="0 0 16 16"><circle cx="7.5" cy="8.5" r="5.75"/><path d="M4.7 8.8 6.8 10.9 10.3 6.6"/><circle cx="13" cy="3" r="2.3" fill="currentColor" stroke="none"/></symbol>
+<symbol id="g-x" viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2"/><path d="M5.5 5.5 10.5 10.5M10.5 5.5 5.5 10.5"/></symbol>
+<symbol id="g-eye" viewBox="0 0 16 16"><path d="M1.5 8C3.5 4.5 12.5 4.5 14.5 8 12.5 11.5 3.5 11.5 1.5 8Z"/><circle cx="8" cy="8" r="1.8"/></symbol>
+<symbol id="g-blocked" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.25"/><path d="M3.6 12.4 12.4 3.6"/></symbol>
+<symbol id="g-dash" viewBox="0 0 16 16"><path d="M3.5 8H12.5"/></symbol>
+<symbol id="g-octagon" viewBox="0 0 16 16"><path d="M5.2 1.8h5.6l3.4 3.4v5.6l-3.4 3.4H5.2l-3.4-3.4V5.2Z"/><path d="M8 4.8v4"/><circle cx="8" cy="11.2" r=".6" fill="currentColor"/></symbol>
+<symbol id="g-triangle" viewBox="0 0 16 16"><path d="M8 2 14.5 13.5h-13Z"/><path d="M8 6.5v3.2"/><circle cx="8" cy="11.6" r=".6" fill="currentColor"/></symbol>
+<symbol id="g-circlebang" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.25"/><path d="M8 4.7v4"/><circle cx="8" cy="11.1" r=".6" fill="currentColor"/></symbol>
+<symbol id="g-dot" viewBox="0 0 16 16"><circle cx="8" cy="8" r="3" fill="currentColor"/></symbol>
+<symbol id="g-open" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.5"/></symbol>
+<symbol id="g-half" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.25"/><path d="M8 1.75a6.25 6.25 0 0 0 0 12.5Z" fill="currentColor"/></symbol>
+<symbol id="g-clock" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.25"/><path d="M8 4.5V8l2.5 1.5"/></symbol>
+<symbol id="g-wontfix" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.25"/><path d="M5 8h6"/></symbol>
+<symbol id="g-expand" viewBox="0 0 16 16"><path d="M9.5 2.5h4v4M6.5 13.5h-4v-4M13.5 2.5 9 7M2.5 13.5 7 9"/></symbol>
+</defs></svg>
+</body>
+</html>
