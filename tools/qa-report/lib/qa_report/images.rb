@@ -64,7 +64,23 @@ module QaReport
       end
     end
 
+    # Stands in for the real images when the page is only scanned: fixed width, no bytes, a payload-free URI.
+    class Placeholders
+      PLACEHOLDER_URI = "data:,"
+      Placeholder = Struct.new(:width) { def data_uri = PLACEHOLDER_URI }
+
+      def initialize(source)
+        @images = source.screenshots.to_h { |shot| [shot["id"], Placeholder.new(0)] }
+      end
+
+      def fetch(id) = @images.fetch(id)
+    end
+
     attr_reader :warnings
+
+    def self.display_width(source, shot)
+      [(pixel_width(source.screenshot_path(shot)).to_f / (shot["dpr"] || 1)).round, MAX_WIDTH].min.clamp(1, MAX_WIDTH)
+    end
 
     def self.encoder(path: ENV.fetch("PATH", ""), timeout: DEFAULT_TIMEOUT)
       dirs = path.split(File::PATH_SEPARATOR)
@@ -166,7 +182,7 @@ module QaReport
 
     def encode(source, shot, encoder)
       path = source.screenshot_path(shot)
-      width = [(self.class.pixel_width(path).to_f / (shot["dpr"] || 1)).round, MAX_WIDTH].min.clamp(1, MAX_WIDTH)
+      width = self.class.display_width(source, shot)
       quality = FIRST_QUALITY
       bytes = encoder.encode(path, width: width, quality: quality)
       if embedded_size(bytes) > IMAGE_LIMIT

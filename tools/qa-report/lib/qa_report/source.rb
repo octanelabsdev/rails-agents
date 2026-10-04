@@ -136,6 +136,8 @@ module QaReport
     # The one rule that turns an authored id into a DOM id; the renderer uses it too, so the two cannot drift.
     def self.slug(id) = id.to_s.downcase.gsub(/[^a-z0-9]+/, "-").gsub(/\A-|-\z/, "")
 
+    def self.blank?(value) = value.nil? || (value.respond_to?(:empty?) && value.empty?) || (value.is_a?(String) && value.strip.empty?)
+
     def self.client_keys(kind) = SCHEMA.fetch(kind).select { |_, field| field.klass == :client }.keys
 
     def self.label(collection, item, index)
@@ -144,7 +146,7 @@ module QaReport
     end
 
     def initialize(data, root:, sha256: nil)
-      @data = data
+      @data = without_blank_optionals(data)
       @root = File.expand_path(root)
       @sha256 = sha256
       problems = validate
@@ -188,7 +190,41 @@ module QaReport
 
     def screenshot_path(shot) = File.expand_path(shot["file"], @root)
 
+    # Everything the client file must never repeat: internal-classed fields plus the client-classed text of internal-only records.
+    def internal_texts
+      texts = schema_texts(:top, @data)
+      texts += screenshots.reject { |shot| shot["visibility"] == "client" }.flat_map { |shot| shot.values_at("caption", "alt").compact }
+      texts + notes.reject { |note| note["client_facing"] == true }.flat_map { |note| strings(note) }
+    end
+
     private
+
+    def schema_texts(kind, hash)
+      SCHEMA.fetch(kind).flat_map do |key, field|
+        value = hash[key]
+        next [] if value.nil?
+
+        field.klass == :internal ? strings(value) : nested_texts(field.type, value)
+      end
+    end
+
+    def nested_texts(type, value)
+      kind, item_kind = type
+      return schema_texts(item_kind, value) if kind == :shape
+      return [] unless kind == :list && SCHEMA.key?(item_kind)
+
+      value.flat_map { |item| schema_texts(item_kind, item) }
+    end
+
+    def strings(value)
+      case value
+      when Hash then value.values.flat_map { |child| strings(child) }
+      when Array then value.flat_map { |child| strings(child) }
+      when String then [value]
+      when Integer then [value.to_s]
+      else []
+      end
+    end
 
     def failing?
       requirements.any? { |item| item["result"] != "MET" } ||
@@ -201,6 +237,16 @@ module QaReport
     end
 
     def unresolved?(issue) = [OPEN, FIXED_UNVERIFIED].include?(issue["status"])
+
+    # The skeleton leaves optional keys blank or empty; those mean absent, so they are dropped before any check or render.
+    def without_blank_optionals(data)
+      return data unless data.is_a?(Hash)
+
+      data.reject do |key, value|
+        field = SCHEMA[:top][key]
+        field && !field.required && Source.blank?(value)
+      end
+    end
 
     # Shape problems come first: the semantic checks assume every value already has its declared type.
     def validate

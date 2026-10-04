@@ -9,7 +9,7 @@ module QaReport
     Font = Struct.new(:family, :weight, :data)
     SAFE_FAMILY = /\A[\w .-]+\z/
 
-    attr_reader :name, :contact_email, :wordmark_on_dark, :wordmark_on_light, :fonts
+    attr_reader :name, :contact_email, :view_box, :wordmark_on_dark, :wordmark_on_light, :fonts
 
     def self.default
       new(name: "Example Studio", contact_email: "hello@example.com",

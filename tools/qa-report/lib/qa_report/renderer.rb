@@ -11,16 +11,17 @@ require_relative "page_findings"
 module QaReport
   # What the internal banner says about the client file; built only through the named constructors.
   class ClientStatus
-    attr_reader :kind, :detail
+    attr_reader :kind, :detail, :command
 
     def self.approved(file) = new(:approved, file)
-    def self.awaiting(stem) = new(:awaiting, stem)
+    def self.awaiting(command:) = new(:awaiting, nil, command)
     def self.stale = new(:stale)
     def self.blocked(reason) = new(:blocked, reason)
 
-    def initialize(kind, detail = nil)
+    def initialize(kind, detail = nil, command = nil)
       @kind = kind
       @detail = detail
+      @command = command
     end
   end
 
@@ -45,7 +46,7 @@ module QaReport
     SECTIONS = [["summary", "Summary"], ["checked", "What we checked"], ["journeys", "Journeys"],
                 ["issues", "Issues found"], ["shots", "Screenshots"], ["how", "How we tested"]].freeze
 
-    # Writing is all-or-nothing, but the renames are per file, so the set is not atomic.
+    # Each file is replaced atomically by rename, but the set of files is not.
     def self.write_files(dir, files)
       temps = {}
       files.each do |name, content|
@@ -59,7 +60,7 @@ module QaReport
       temps&.each_key { |temp| File.delete(temp) if File.exist?(temp) }
     end
 
-    def initialize(source, brand:, client:, status:, encoder: nil)
+    def initialize(source, brand:, client:, status: nil, encoder: nil)
       @source = source
       @brand = brand
       @client = client
@@ -67,20 +68,29 @@ module QaReport
       @encoder = encoder
     end
 
-    def internal_html
-      Page.new(@source, Projection.internal(@source), @brand, @client, @status, internal: true, images: images).to_html
+    # The status is known only after the client file is decided, so a caller may pass the final one here.
+    def internal_html(status: @status)
+      Page.new(@source, Projection.internal(@source), @brand, @client, status, internal: true, images: images).to_html
     end
 
-    def client_html
-      raise ClientBlocked, ["this is an internal-only project, so it has no client view"] unless @client
+    def client_html = client_page(payloads: true)
 
-      Page.new(@source, Projection.client(@source), @brand, @client, @status, internal: false, images: images).to_html
-    end
+    # The client file as the leak scan reads it: identical text, with every image and font payload replaced by a placeholder.
+    def client_scan_html = client_page(payloads: false)
 
     def warnings = images.warnings
 
     # Built on first use and shared, so each screenshot is encoded once however many files embed it.
     def images = @images ||= Images.new(@source, encoder: @encoder || Images.encoder)
+
+    private
+
+    def client_page(payloads:)
+      raise ClientBlocked, ["this is an internal-only project, so it has no client view"] unless @client
+
+      page_images = payloads ? images : Images::Placeholders.new(@source)
+      Page.new(@source, Projection.client(@source), @brand, @client, @status, internal: false, images: page_images, embed_fonts: payloads).to_html
+    end
 
     # The ERB context: every method a template calls lives here, and the templates read only the view data.
     class Page
@@ -88,7 +98,7 @@ module QaReport
 
       attr_reader :data, :brand, :client, :copy, :images
 
-      def initialize(source, data, brand, client, status, internal:, images:)
+      def initialize(source, data, brand, client, status, internal:, images:, embed_fonts: true)
         @source = source
         @data = data
         @brand = brand
@@ -96,6 +106,7 @@ module QaReport
         @status = status
         @internal = internal
         @images = images
+        @embed_fonts = embed_fonts
         @copy = Copy.new(source)
       end
 
@@ -192,7 +203,7 @@ module QaReport
         detail = h(@status&.detail)
         case @status&.kind
         when :approved then %(Client version: <a href="#{detail}">#{detail}</a>)
-        when :awaiting then "Client version: awaiting owner approval — run qa-report approve QA/#{detail}.qa.yml"
+        when :awaiting then "Client version: awaiting owner approval — run #{h(@status.command)}"
         when :stale then "Client version: approval out of date — re-approve"
         when :blocked then "Client version: blocked — #{detail}; see build output"
         else "Client version: none (internal-only project)."
@@ -218,9 +229,11 @@ module QaReport
       def font_faces
         brand.fonts.map do |font|
           %(@font-face { font-family: "#{font.family}"; font-style: normal; font-weight: #{font.weight}; font-display: swap; ) +
-            %(src: url(data:font/woff2;base64,#{font.data}) format("woff2"); })
+            %(src: url(#{font_uri(font)}) format("woff2"); })
         end.join("\n")
       end
+
+      def font_uri(font) = @embed_fonts ? "data:font/woff2;base64,#{font.data}" : Images::Placeholders::PLACEHOLDER_URI
 
       def page_rules
         label = [brand.name, "QA report", client].compact.map { |part| css_string(part) }.join(" \\00B7  ")
