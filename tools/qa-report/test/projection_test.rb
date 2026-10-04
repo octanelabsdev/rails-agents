@@ -69,7 +69,7 @@ class ProjectionTest < Minitest::Test
 
     assert_equal "Set up the proposal in steps", journey["title_plain"]
     assert_equal "PASS", journey["result"]
-    refute_includes json, "CANARY-INT-1262"
+    refute_includes json, "CANARY-INT-FAIL"
     refute_includes json, "CANARY-TECH-1"
     refute_includes json, "CANARY-INTERNAL"
   end
@@ -81,7 +81,7 @@ class ProjectionTest < Minitest::Test
   def test_the_internal_view_keeps_the_canaries
     json = JSON.generate(QaReport::Projection.internal(load_fixture(:fail)))
 
-    assert_includes json, "CANARY-INT-1262"
+    assert_includes json, "CANARY-INT-FAIL"
     assert_includes json, "CANARY-TECH-1"
   end
 

@@ -1,0 +1,11 @@
+# Neutral test brand: a fictional studio, so no real brand reaches the tests or the golden files.
+name: Northwind Studio
+contact_email: hello@example.com
+wordmark:
+  on_dark: wordmark-on-dark.svg
+  on_light: wordmark-on-light.svg
+  view_box: "10 20 330 60"
+fonts:
+  - family: Test Sans
+    weight: 400
+    file: test-sans.woff2

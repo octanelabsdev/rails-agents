@@ -10,7 +10,7 @@ class SourceRejectionTest < Minitest::Test
   # AC1 (A-R1)
   def test_an_unclassed_top_level_key_rejects_the_source
     assert_rejected("client_nickname") do
-      source_from(:pass_with_notes) { |data| data["client_nickname"] = "Cedar" }
+      source_from(:pass_with_notes) { |data| data["client_nickname"] = "Example" }
     end
   end
 
@@ -43,6 +43,9 @@ class SourceRejectionTest < Minitest::Test
 
     assert_includes error.message, "owner decision 6"
     assert_match(/retake/i, error.message)
+    refute_includes error.message, "placeholder placeholder", "the field path and the message repeat the key"
+    assert error.problems.any? { |problem| problem.start_with?("screenshots[1b].placeholder is not a key in the schema") },
+      "expected a clean 'screenshots[1b].placeholder is not a key in the schema …' line, got #{error.problems.inspect}"
   end
 
   def test_a_placeholder_key_set_to_false_still_rejects_the_source
