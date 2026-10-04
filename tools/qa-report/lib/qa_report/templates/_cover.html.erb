@@ -1,0 +1,25 @@
+<header class="cover">
+ <div class="wrap">
+  <div class="letterhead"><%= brand.wordmark(:dark, class_name: "wm-screen") %><%= brand.wordmark(:light, class_name: "wm-print", decorative: true) %></div>
+  <div class="rule-print"></div>
+  <p class="eyebrow">QA report<%= int(%(<span> · CARD ##{h(data["card"])}</span>)) %></p>
+  <h1 id="title"><span class="lead-line">Acceptance QA:</span> <span class="accent"><%= h(data["feature_title_plain"]) %></span></h1>
+  <dl class="meta">
+<% if client -%>
+   <div><dt>Prepared for</dt><dd><%= h(client) %></dd></div>
+<% end -%>
+   <div><dt>Project</dt><dd><%= h(data["project_plain"]) %></dd></div>
+   <div><dt>Tested</dt><dd><%= h(format_date(data["tested_on"])) %><span class="plain"><%= h(data["environment_label"]) %></span></dd></div>
+   <div><dt>Build</dt><dd><%= h(data["build_plain"]) %></dd></div>
+  </dl>
+  <div class="verdict <%= verdict_tone %>" role="group" aria-label="Verdict">
+   <%= glyph(verdict_glyph) %>
+   <div><p class="v-label"><%= h(verdict.capitalize) %></p><p class="v-exp"><%= h(copy.explainer) %></p></div>
+  </div>
+  <ul class="stat-strip" role="list">
+<% stat_strip.each do |label, (value, note)| -%>
+   <li class="stat"><div class="value"><%= h(value) %></div><div class="label"><%= h(label) %></div><% if note %><div class="note"><%= h(note) %></div><% end %></li>
+<% end -%>
+  </ul>
+ </div>
+</header>
