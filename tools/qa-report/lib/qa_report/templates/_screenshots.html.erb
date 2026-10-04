@@ -1,0 +1,11 @@
+<section id="shots" aria-labelledby="h-shots">
+ <div class="wrap-wide"><div class="sec-head"><span class="eyebrow"><%= section_label("shots") %></span><h2 class="h2"><span id="h-shots">What we saw</span></h2></div>
+  <p class="body" style="margin-top:1rem">Select any picture to see it full size.</p>
+<% shot_groups.each do |group, shots| -%>
+  <div class="shot-group"><h3 class="h3"><%= h(group) %></h3><div class="shots">
+<% shots.each do |shot| -%>
+   <%= figure(shot) %>
+<% end -%>
+  </div></div>
+<% end -%>
+ </div></section>

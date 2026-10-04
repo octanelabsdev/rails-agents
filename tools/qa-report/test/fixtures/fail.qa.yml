@@ -60,14 +60,14 @@ journeys:
     description_plain: Over several saves, entered the dates, cover figures, phases, option cards and line items.
     result: PASS
     evidence: [1a]
-    technical_detail: CANARY-TECH-1 Via /admin/proposals/new then /admin/proposals/:id/edit, saved incrementally.
+    technical_detail: CANARY-TECH-1 Via /admin/reports/new then /admin/reports/:id/edit, saved incrementally.
   - id: 2
     title_plain: Give the proposal a headline and label
     description_plain: Looked for a way to set the cover headline and the label above it.
     result: FAIL
     evidence: []
     evidence_note_plain: No headline field exists to capture
-    technical_detail: CANARY-INTERNAL-J2 proposals.title exists (db/schema.rb:456) but proposal_params never permits it.
+    technical_detail: CANARY-INTERNAL-J2 the title column exists but the form never permits it.
   - id: 3
     title_plain: Add phases, option groups and line items in one pass
     description_plain: Added them all on the New proposal screen before the first save.
@@ -81,19 +81,19 @@ journeys:
     result: FAIL
     evidence: []
     evidence_note_plain: Ended on an error page
-    technical_detail: "CANARY-INTERNAL-J4 ArgumentError: Cannot get a signed_id for a new record (file_upload_component.html.erb:7)."
+    technical_detail: CANARY-INTERNAL-J4 The upload field errors on an unsaved record.
   - id: 5
     title_plain: Add diagram, roadmap and written sections
     description_plain: Added them in steps and previewed the result.
     result: PASS
     evidence: [1b]
-    technical_detail: CANARY-INTERNAL-J5 Narrative Summary via Lexxy rich text; diagram section 2; roadmap section 3.
+    technical_detail: CANARY-INTERNAL-J5 Summary via the rich text editor; diagram section 2; roadmap section 3.
   - id: 6
     title_plain: Preview in light and dark
     description_plain: Switched themes in the preview; the cover stayed dark in both.
     result: PASS
     evidence: [1a, 1b, 1c]
-    technical_detail: CANARY-INTERNAL-J6 Tier price range renders via tier_price_display.
+    technical_detail: CANARY-INTERNAL-J6 Price range renders from the option prices.
   - id: 7
     title_plain: Compare section headings with the design
     description_plain: Checked each section heading against the approved design.
@@ -111,14 +111,14 @@ journeys:
     description_plain: Looked at the cover page of the downloaded PDF.
     result: PASS
     evidence: [2a]
-    technical_detail: CANARY-INTERNAL-J9 Print cover uses the on_light wordmark.
+    technical_detail: CANARY-INTERNAL-J9 Print cover uses the light wordmark.
   - id: 10
     title_plain: Use the Contents list
     description_plain: "Could not be tried: there is no Contents list in this build."
     result: BLOCKED
     evidence: []
     evidence_note_plain: Could not be tried
-    technical_detail: CANARY-INTERNAL-J10 Grepped document_component.html.erb for contents/toc, zero matches.
+    technical_detail: CANARY-INTERNAL-J10 Searched the document template for a contents list, zero matches.
 
 issues:
   - id: D1
@@ -133,8 +133,8 @@ issues:
       - Look through the Details section for a title or label field.
     expected_plain: Title and label fields in Details.
     actual_plain: There are no such fields.
-    status_note_plain: "Fixed in PR #95; awaiting re-test."
-    root_cause: CANARY-INTERNAL-D1 app/controllers/admin/proposals_controller.rb:122-136 (proposal_params). TRACKER-103.
+    fixed_in: ["PR #101"]
+    root_cause: CANARY-INTERNAL-D1 app/controllers/admin/reports_controller.rb:40-52 (report_params). TRACKER-103.
   - id: D2
     severity: BLOCKER
     status: FIXED & VERIFIED
@@ -149,8 +149,9 @@ issues:
       - Select Create proposal.
     expected_plain: The form reopens with a message about the missing option group, and your image and entries are kept.
     actual_plain: An error page appears and nothing is saved.
-    status_note_plain: "Fixed in PR #97 and PR #98; re-tested October 2, 2026."
-    root_cause: CANARY-INTERNAL-D2 app/components/ui/file_upload_component.html.erb:7 calls signed_id. TRACKER-104.
+    fixed_in: ["PR #102", "PR #103"]
+    retested_on: 2026-10-02
+    root_cause: CANARY-INTERNAL-D2 app/components/upload_component.html.erb:7 needs a saved record. TRACKER-104.
   - id: D3
     severity: MAJOR
     status: OPEN
@@ -164,8 +165,7 @@ issues:
       - Add a line item and open its Phase and Option group choices.
     expected_plain: The phase and option group you just added are listed.
     actual_plain: Only phases and groups from an already saved proposal are listed.
-    status_note_plain: Open as of October 2, 2026.
-    root_cause: CANARY-INTERNAL-D3 nested line-item fields partial populates selects from persisted associations only.
+    root_cause: CANARY-INTERNAL-D3 the line item choices list only saved phases and groups.
   - id: D4
     severity: MAJOR
     status: OPEN
@@ -178,8 +178,7 @@ issues:
     expected_plain: The diagram image appears in the PDF.
     actual_plain: A broken-image icon appears above the (correct) caption.
     screenshot: 2a
-    status_note_plain: Open as of October 2, 2026.
-    root_cause: CANARY-INTERNAL-D4 app/services/proposal_pdf_service.rb inlines fonts but not diagram_image.
+    root_cause: CANARY-INTERNAL-D4 app/views/reports/show.pdf.erb:12 inlines fonts but not the diagram image.
   - id: D5
     severity: MAJOR
     status: OPEN
@@ -194,8 +193,7 @@ issues:
     expected_plain: The PDF contains only the proposal.
     actual_plain: A black header bar with a menu icon sits above the cover, and a fifth page shows the website footer.
     screenshot: 2b
-    status_note_plain: Open as of October 2, 2026.
-    root_cause: CANARY-INTERNAL-D5 ProposalPdfService#component_html renders with no layout false.
+    root_cause: CANARY-INTERNAL-D5 ReportPdfService renders inside the site layout.
   - id: D6
     severity: MAJOR
     status: DEFERRED
@@ -206,8 +204,8 @@ issues:
       - Look below the cover for a Contents list.
     expected_plain: A Contents list linking to each section.
     actual_plain: No Contents list.
-    status_note_plain: "Deferred. Reason: being delivered as its own piece of work rather than as part of this round."
-    root_cause: CANARY-INTERNAL-D6 no TOC in Proposals::DocumentComponent.
+    status_reason_plain: Being delivered as its own piece of work rather than as part of this round.
+    root_cause: CANARY-INTERNAL-D6 no contents list in Reports::DocumentComponent.
   - id: D7
     severity: MINOR
     status: OPEN
@@ -218,8 +216,7 @@ issues:
       - Compare a section heading with the approved design.
     expected_plain: A coloured label above a plain heading.
     actual_plain: One combined heading with a grey number.
-    status_note_plain: Open as of October 2, 2026.
-    root_cause: CANARY-INTERNAL-D7 app/components/proposals/document_component.html.erb:92-97.
+    root_cause: CANARY-INTERNAL-D7 app/components/reports/document_component.html.erb:30-34.
   - id: D8
     severity: MINOR
     status: WON'T FIX
@@ -231,8 +228,8 @@ issues:
       - Preview the proposal.
     expected_plain: The text appears somewhere, or the field is clearly marked as not shown.
     actual_plain: The text appears nowhere.
-    status_note_plain: "Won't fix. Reason: the field is meant for private notes; we will relabel it so that is clear."
-    root_cause: CANARY-INTERNAL-D8 proposal.body is never rendered; only section.body is.
+    status_reason_plain: The field is meant for private notes; we will relabel it so that is clear.
+    root_cause: CANARY-INTERNAL-D8 the top-level body field is never rendered; only section bodies are.
 
 notes:
   - id: N1
@@ -262,6 +259,7 @@ screenshots:
     pixels_clean: true
   - id: 1c
     file: fail/screenshots/1c.png
+    dpr: 2
     group_plain: On-screen result
     variant: Phone
     alt: The authored proposal at phone width
@@ -292,5 +290,5 @@ internal:
   environment: CANARY-INT-FAIL staging server https://app.example.test; Lead id 9003 (QAMOCK Sample Prospect), Proposal id 9004.
   process_notes:
     - CANARY-INTERNAL-PROCESS TRACKER-102, TRACKER-103 and TRACKER-104 were commented with repro detail; none were closed.
-  cleanup: CANARY-INTERNAL-CLEANUP Lead 9003 and Proposal 9004 destroyed via bin/rails runner.
-  sources: CANARY-INTERNAL-SOURCES QA/2026-10-01-TRACKER-102-pixel-for-pixel-proposal.md; main @ a1b2c3d.
+  cleanup: CANARY-INTERNAL-CLEANUP Lead 9003 and Proposal 9004 deleted after the test.
+  sources: CANARY-INTERNAL-SOURCES QA/2026-10-01-TRACKER-102-layout-check.md; main @ a1b2c3d.

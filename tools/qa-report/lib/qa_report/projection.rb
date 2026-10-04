@@ -52,7 +52,6 @@ module QaReport
     def screenshot_problems(source)
       source.screenshots.each_with_index.flat_map do |shot, index|
         path = Source.label("screenshots", shot, index)
-        next ["#{path}.visibility must be client or internal"] unless %w[client internal].include?(shot["visibility"])
         next [] unless shot["visibility"] == "client"
 
         [("#{path}.alt must not be empty" if blank?(shot["alt"])),

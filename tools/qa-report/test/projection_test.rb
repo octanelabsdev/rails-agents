@@ -11,9 +11,9 @@ class ProjectionTest < Minitest::Test
     coverage_row: %w[area_plain cells],
     journey: %w[id title_plain description_plain result evidence evidence_note_plain],
     issue: %w[id severity status title_plain impact_plain steps_plain expected_plain actual_plain screenshot
-              status_note_plain],
-    note: %w[id title_plain body_plain recommendation_plain],
-    screenshot: %w[id file group_plain variant alt caption focal sha256]
+              fixed_in retested_on status_reason_plain],
+    note: %w[id title_plain body_plain recommendation_plain coverage_column],
+    screenshot: %w[id file group_plain variant alt caption focal dpr sha256]
   }.freeze
 
   def assert_only_client_keys(hash, kind)
@@ -92,10 +92,12 @@ class ProjectionTest < Minitest::Test
   end
 
   def test_the_client_view_omits_screenshots_with_internal_visibility
-    source = source_from(:pass_with_notes) { |data| find_by_id(data["screenshots"], "2b")["visibility"] = "internal" }
+    source = source_from(:pass_with_notes) do |data|
+      find_by_id(data["screenshots"], "2b").merge!("visibility" => "internal", "internal_reason" => "Shows the admin side.")
+    end
     ids = QaReport::Projection.client(source)["screenshots"].map { |shot| shot["id"] }
 
-    assert_equal %w[1a 1b 2a 3a], ids
+    assert_equal %w[1a 1b 1c 2a 3a], ids
     refute_includes find_by_id(QaReport::Projection.client(source)["journeys"], 4)["evidence"], "2b"
   end
 

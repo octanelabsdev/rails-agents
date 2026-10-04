@@ -5,6 +5,8 @@ require_relative "source"
 require_relative "projection"
 require_relative "copy"
 require_relative "brand"
+require_relative "images"
+require_relative "page_findings"
 
 module QaReport
   # What the internal banner says about the client file; built only through the named constructors.
@@ -40,47 +42,75 @@ module QaReport
       "BLOCKED" => ["t-blocked", "blocked", "Blocked"], "OBSERVED" => ["t-info", "eye", "Observed"],
       "NOT TESTED" => ["t-neutral", "dash", "Not tested"]
     }.freeze
-    SECTIONS = [["summary", "Summary"], ["checked", "What we checked"], ["journeys", "Journeys"]].freeze
+    SECTIONS = [["summary", "Summary"], ["checked", "What we checked"], ["journeys", "Journeys"],
+                ["issues", "Issues found"], ["shots", "Screenshots"], ["how", "How we tested"]].freeze
 
-    def initialize(source, brand:, client:, status:)
+    # Writing is all-or-nothing, but the renames are per file, so the set is not atomic.
+    def self.write_files(dir, files)
+      temps = {}
+      files.each do |name, content|
+        path = File.join(dir, name)
+        temp = "#{path}.tmp#{Process.pid}"
+        temps[temp] = path
+        File.binwrite(temp, content)
+      end
+      temps.each { |temp, path| File.rename(temp, path) }
+    ensure
+      temps&.each_key { |temp| File.delete(temp) if File.exist?(temp) }
+    end
+
+    def initialize(source, brand:, client:, status:, encoder: nil)
       @source = source
       @brand = brand
       @client = client
       @status = status
+      @encoder = encoder
     end
 
-    def internal_html = Page.new(@source, Projection.internal(@source), @brand, @client, @status, internal: true).to_html
+    def internal_html
+      Page.new(@source, Projection.internal(@source), @brand, @client, @status, internal: true, images: images).to_html
+    end
 
     def client_html
       raise ClientBlocked, ["this is an internal-only project, so it has no client view"] unless @client
 
-      Page.new(@source, Projection.client(@source), @brand, @client, @status, internal: false).to_html
+      Page.new(@source, Projection.client(@source), @brand, @client, @status, internal: false, images: images).to_html
     end
+
+    def warnings = images.warnings
+
+    # Built on first use and shared, so each screenshot is encoded once however many files embed it.
+    def images = @images ||= Images.new(@source, encoder: @encoder || Images.encoder)
 
     # The ERB context: every method a template calls lives here, and the templates read only the view data.
     class Page
-      attr_reader :data, :brand, :client, :copy
+      include PageFindings
 
-      def initialize(source, data, brand, client, status, internal:)
+      attr_reader :data, :brand, :client, :copy, :images
+
+      def initialize(source, data, brand, client, status, internal:, images:)
         @source = source
         @data = data
         @brand = brand
         @client = client
         @status = status
         @internal = internal
+        @images = images
         @copy = Copy.new(source)
       end
 
       def to_html = partial("report")
 
-      def partial(name)
+      def partial(name, **locals)
         file = name == "report" ? "report.html.erb" : "_#{name}.html.erb"
-        ERB.new(template_text(file), trim_mode: "-").result(binding)
+        context = binding
+        locals.each { |key, value| context.local_variable_set(key, value) }
+        ERB.new(template_text(file), trim_mode: "-").result(context)
       end
 
       def h(text) = ERB::Util.html_escape(text.to_s)
 
-      def int(html) = @internal ? "<!--int-->#{html}<!--/int-->" : ""
+      def int(html) = @internal && !html.empty? ? "<!--int-->#{html}<!--/int-->" : ""
 
       def title = "QA report: #{data["feature_title_plain"]}"
 
@@ -99,7 +129,7 @@ module QaReport
 
       def badge(map, result)
         tone, icon, word = map.fetch(result)
-        %(<span class="badge #{tone}">#{glyph(icon)}<span>#{word}</span></span>)
+        %(<span class="badge #{tone}">#{glyph(icon)}<span>#{h(word)}</span></span>)
       end
 
       def coverage_cell(value)
@@ -118,7 +148,7 @@ module QaReport
       end
 
       def toc_items
-        SECTIONS.each_with_index.map do |(id, name), index|
+        sections.each_with_index.map do |(id, name), index|
           %(<li><a href="##{id}"><span class="num">#{format("%02d", index + 1)}</span><span>#{name}</span></a></li>)
         end.join
       end

@@ -3,7 +3,25 @@
 .banner-int .sub { font-weight: 400; }
 .banner-int a { color: inherit; }
 .int-link { font-size: 0.8125rem; font-weight: 700; color: var(--color-amber-800); display: inline-block; margin-top: 0.25rem; }
+main > section.appendix { border-top: none; }
+.appendix-box { border: 1px dashed var(--color-amber-800); border-left: 4px solid var(--color-amber-800); border-radius: 0.5rem; padding: 1.25rem; }
+@media (min-width: 640px) { .appendix-box { padding: 2rem; } }
+.appendix-box, .appendix code { overflow-wrap: anywhere; }
+.appendix pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+.appendix .eyebrow { color: var(--color-amber-800); }
+.appendix h3.h3 { margin-top: 1.75rem; }
+.appendix h4 { font-size: 0.9375rem; font-weight: 700; margin-top: 1.25rem; }
+.appendix p, .appendix li { font-size: 0.9375rem; line-height: 1.6rem; color: var(--color-steel-800); }
+.appendix ul { padding-left: 1.2rem; }
+.appendix li + li { margin-top: 0.25rem; }
+.appendix .reason { margin-top: 0.4rem; font-weight: 700; }
+pre { font-family: var(--font-mono); font-size: 0.875rem; background: var(--color-steel-100); border-radius: 0.5rem; padding: 1rem; overflow-x: auto; margin: 0.75rem 0 0; line-height: 1.5; color: var(--color-steel-800); }
 @media print {
+  .appendix-box { border: none; border-left: 4px solid var(--color-amber-800); border-top: 1px dashed var(--color-amber-800); border-radius: 0; padding: 0.75rem 0 0 1rem; }
+  .appendix h3.h3 { margin-top: 0.9rem; }
+  .appendix h4 { margin-top: 0.5rem; }
+  .appendix p, .appendix li { line-height: 1.35rem; }
+  pre { font-family: Menlo, "Courier New", monospace; white-space: pre-wrap; background: #FFFFFF; border: 1px solid var(--color-border); }
   .banner-int, .int-link { display: none !important; }
   body { page: internal; }
 }

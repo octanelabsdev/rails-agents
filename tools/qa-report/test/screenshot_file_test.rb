@@ -3,7 +3,9 @@ require_relative "test_helper"
 # A-R12: a screenshot must be a real image file inside the source folder.
 class ScreenshotFileTest < Minitest::Test
   JPEG_HEADER = "\xFF\xD8\xFF\xE0\x00\x10JFIF\x00\x01\x01\x00\x00\x01".b
-  WEBP_HEADER = "RIFF\x1A\x00\x00\x00WEBPVP8 \x0E\x00\x00\x00".b
+  # Through the VP8 frame's width and height (byte 30), the most the renderer reads from a WebP.
+  WEBP_HEADER = "RIFF\x16\x00\x00\x00WEBPVP8 \x0A\x00\x00\x00\x00\x00\x00\x9D\x01\x2A\x90\x01\x2C\x01".b
+  SHORT_WEBP = "RIFF\x1A\x00\x00\x00WEBPVP8 \x0E\x00\x00\x00".b
 
   def with_shot(bytes, name)
     with_fixture_copy(:pass_with_notes) do |root|
@@ -25,6 +27,15 @@ class ScreenshotFileTest < Minitest::Test
   def test_a_webp_header_is_accepted
     with_shot(WEBP_HEADER, "1b.webp") do |root|
       assert_kind_of QaReport::Source, source_from(:pass_with_notes, root: root, &point_1b_at("pass_with_notes/screenshots/1b.webp"))
+    end
+  end
+
+  # A WebP cut off before its width is a clean rejection, not a NoMethodError when it is encoded.
+  def test_a_webp_too_short_to_hold_its_width_rejects_the_source
+    with_shot(SHORT_WEBP, "1b.webp") do |root|
+      assert_rejected("screenshots[1b].file") do
+        source_from(:pass_with_notes, root: root, &point_1b_at("pass_with_notes/screenshots/1b.webp"))
+      end
     end
   end
 

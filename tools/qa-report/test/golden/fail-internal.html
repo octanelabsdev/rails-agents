@@ -176,12 +176,70 @@ table.j-table tr.is-fail > td:first-child, table.j-table tr.is-fail > th:first-c
 .ev-list a { font-weight: 700; display: inline-flex; align-items: center; min-height: 1.75rem; }
 .ev-none { color: var(--color-text-muted); }
 
+.issues { display: grid; gap: 1rem; margin-top: 1.5rem; }
+.issue { border: 1px solid var(--color-border); border-radius: 0.75rem; padding: 1.25rem; background: var(--color-surface); break-inside: avoid; scroll-margin-top: 4rem; }
+@media (min-width: 640px) { .issue { padding: 1.5rem; } }
+.issue.sev-blocker { border: 2px solid var(--color-danger-text); }
+.issue > * + * { margin-top: 0.85rem; }
+.issue-head { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; align-items: center; justify-content: space-between; }
+.issue-head .eyebrow { margin: 0; color: var(--color-text-muted); }
+.issue h4 { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-muted); margin-bottom: 0.25rem; }
+.issue p, .issue li { font-size: 0.9375rem; line-height: 1.5rem; color: var(--color-steel-800); }
+.issue ol { padding-left: 1.2rem; }
+.exp-act { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--color-border); border-radius: 0.5rem; }
+.exp-act > div { padding: 0.85rem 1rem; }
+.exp-act > div + div { border-left: 1px solid var(--color-border); }
+.status-line { display: flex; gap: 0.5rem; align-items: flex-start; padding-top: 0.85rem; border-top: 1px solid var(--color-border); font-weight: 700; }
+.status-line .g { margin-top: 0.25rem; }
+.zero { border: 2px solid var(--color-success-text); background: var(--color-surface); border-radius: 0.75rem; padding: 1.25rem; display: flex; gap: 1rem; align-items: flex-start; margin-top: 1.5rem; }
+@media (min-width: 640px) { .zero { padding: 1.5rem; } }
+.zero > svg { width: 28px; height: 28px; color: var(--color-success-text); }
+.zero p { font-size: 1rem; line-height: 1.75rem; color: var(--color-steel-800); margin-top: 0.25rem; }
+.notes-block { margin-top: 2.5rem; }
+.note { margin-top: 1rem; }
+.note > * + * { margin-top: 0.6rem; }
+.note .eyebrow { margin: 0; color: var(--color-text-muted); }
+.note p { font-size: 0.9375rem; line-height: 1.6rem; color: var(--color-steel-800); max-width: 65ch; }
+.how-text p { font-size: 1rem; line-height: 1.75rem; color: var(--color-steel-800); max-width: 65ch; margin-top: 1rem; }
+
+.shot-group + .shot-group { margin-top: 2.5rem; }
+.shots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1rem; align-items: start; }
+.shots figure { min-width: 0; }
+.shots figure.phone { max-width: 220px; width: 100%; }
+button.thumb { all: unset; box-sizing: border-box; cursor: zoom-in; display: block; position: relative; width: 100%; border: 1px solid var(--color-border); border-radius: 0.5rem; background: var(--color-surface); overflow: hidden; }
+button.thumb:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+button.thumb img { display: block; width: 100%; aspect-ratio: 4/3; object-fit: cover; object-position: top; }
+figure.phone button.thumb img { aspect-ratio: 9/16; }
+.chip { position: absolute; font-size: 0.6875rem; line-height: 1rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; padding: 0.2rem 0.5rem; border-radius: 999px; }
+.chip-x { right: 0.5rem; bottom: 0.5rem; background: var(--color-ink); color: #FFFFFF; display: inline-flex; gap: 0.3rem; align-items: center; border: 1px solid #FFFFFF; }
+figcaption { margin-top: 0.5rem; font-size: 0.8125rem; line-height: 1.25rem; color: var(--color-text-muted); }
+figcaption .vchip { display: inline-block; font-size: 0.6875rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-steel-700); border: 1px solid var(--color-border-strong); border-radius: 999px; padding: 0 0.45rem; margin-right: 0.35rem; }
+figcaption .sid { font-weight: 800; color: var(--color-steel-700); margin-right: 0.35rem; font-variant-numeric: tabular-nums; }
+
+dialog#lb { padding: 0; border: 1px solid var(--color-border-strong); border-radius: 0.75rem; background: var(--color-surface); color: var(--color-text); width: min(64rem, calc(100% - 2rem)); max-width: none; max-height: calc(100dvh - 2rem); margin: auto; }
+dialog#lb[open] { display: flex; flex-direction: column; }
+dialog#lb::backdrop { background: rgba(15, 17, 21, 0.8); }
+.lb-head { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; border-bottom: 1px solid var(--color-border); }
+.lb-head p { margin: 0; }
+#lb-cap { font-size: 0.9375rem; font-weight: 700; }
+#lb-count { font-size: 0.8125rem; color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+.lb-btns { display: flex; gap: 0.5rem; }
+.lb-btns button { font: inherit; font-size: 0.875rem; font-weight: 700; cursor: pointer; min-width: 2.75rem; min-height: 2.75rem; padding: 0 0.9rem; background: var(--color-surface); color: var(--color-text); border: 1px solid var(--color-border-strong); border-radius: 0.5rem; }
+.lb-body { overflow: auto; flex: 1; min-height: 0; background: var(--color-steel-100); }
+.lb-body img { display: block; max-width: none; height: auto; margin-inline: auto; }
+body:has(dialog#lb[open]) { overflow: hidden; }
+
 footer.doc-footer { border-top: 1px solid var(--color-border); padding-block: 2.5rem; font-size: 0.875rem; line-height: 1.5rem; color: var(--color-text-muted); overflow-wrap: anywhere; }
 footer.doc-footer .brandrow { display: flex; gap: 0.75rem; align-items: center; color: var(--color-text); }
 footer.doc-footer p + p { margin-top: 0.5rem; }
 footer.doc-footer .stamp { font-family: var(--font-mono); font-size: 0.75rem; }
 
+@media screen and (max-width: 1023px) {
+  .shots { grid-template-columns: repeat(2, 1fr); }
+}
 @media screen and (max-width: 767px) {
+  .exp-act { grid-template-columns: 1fr; }
+  .exp-act > div + div { border-left: none; border-top: 1px solid var(--color-border); }
   .j-wrap { border: none; border-radius: 0; overflow: visible; }
   table.j-table, table.j-table tbody { display: block; }
   table.j-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
@@ -203,6 +261,8 @@ footer.doc-footer .stamp { font-family: var(--font-mono); font-size: 0.75rem; }
   details.toc-mobile { display: block; }
   table.matrix td .w { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
   .verdict { flex-direction: column; gap: 0.6rem; }
+  .shots { gap: 0.75rem; }
+  .shots figure.phone { grid-column: 1 / -1; }
 }
 
 @media print {
@@ -221,7 +281,7 @@ footer.doc-footer .stamp { font-family: var(--font-mono); font-size: 0.75rem; }
     --danger-solid-bg: #BE123C; --danger-solid-fg: #FFFFFF;
   }
   html { background: #FFFFFF; font-size: 14px; }
-  .contents-sec, dialog, .chip-x, .flags, .vchip, .backlink, .no-print { display: none !important; }
+  .contents-sec, dialog#lb, .chip-x, .flags, .vchip, .backlink, .no-print { display: none !important; }
   body { font-size: 1rem; }
   .wrap, .wrap-wide { max-width: none; padding-inline: 0; }
   main > section { padding-block: 1.2rem; border-top: none; }
@@ -277,6 +337,12 @@ footer.doc-footer .stamp { font-family: var(--font-mono); font-size: 0.75rem; }
   .card, ol.reqs li, figure, tr, .zero, .key { break-inside: avoid; }
   .j-wrap, .scroll-region { break-inside: auto; }
   .issue { break-inside: avoid; }
+  .issues { gap: 0.75rem; margin-top: 0.9rem; }
+  .issue { padding: 0.9rem 1rem; }
+  .issue > * + * { margin-top: 0.6rem; }
+  .shots { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; }
+  .shots figure, .shots figure.phone { flex: 0 0 calc((100% - 1.2rem) / 3); max-width: none; }
+  button.thumb img, figure.phone button.thumb img { aspect-ratio: auto; height: 3.25in; max-height: 3.25in; object-fit: cover; object-position: top; }
   .scroll-region { background: none; overflow: visible; }
   table.matrix tbody th { position: static; }
   thead { display: table-header-group; }
@@ -290,7 +356,25 @@ footer.doc-footer .stamp { font-family: var(--font-mono); font-size: 0.75rem; }
 .banner-int .sub { font-weight: 400; }
 .banner-int a { color: inherit; }
 .int-link { font-size: 0.8125rem; font-weight: 700; color: var(--color-amber-800); display: inline-block; margin-top: 0.25rem; }
+main > section.appendix { border-top: none; }
+.appendix-box { border: 1px dashed var(--color-amber-800); border-left: 4px solid var(--color-amber-800); border-radius: 0.5rem; padding: 1.25rem; }
+@media (min-width: 640px) { .appendix-box { padding: 2rem; } }
+.appendix-box, .appendix code { overflow-wrap: anywhere; }
+.appendix pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+.appendix .eyebrow { color: var(--color-amber-800); }
+.appendix h3.h3 { margin-top: 1.75rem; }
+.appendix h4 { font-size: 0.9375rem; font-weight: 700; margin-top: 1.25rem; }
+.appendix p, .appendix li { font-size: 0.9375rem; line-height: 1.6rem; color: var(--color-steel-800); }
+.appendix ul { padding-left: 1.2rem; }
+.appendix li + li { margin-top: 0.25rem; }
+.appendix .reason { margin-top: 0.4rem; font-weight: 700; }
+pre { font-family: var(--font-mono); font-size: 0.875rem; background: var(--color-steel-100); border-radius: 0.5rem; padding: 1rem; overflow-x: auto; margin: 0.75rem 0 0; line-height: 1.5; color: var(--color-steel-800); }
 @media print {
+  .appendix-box { border: none; border-left: 4px solid var(--color-amber-800); border-top: 1px dashed var(--color-amber-800); border-radius: 0; padding: 0.75rem 0 0 1rem; }
+  .appendix h3.h3 { margin-top: 0.9rem; }
+  .appendix h4 { margin-top: 0.5rem; }
+  .appendix p, .appendix li { line-height: 1.35rem; }
+  pre { font-family: Menlo, "Courier New", monospace; white-space: pre-wrap; background: #FFFFFF; border: 1px solid var(--color-border); }
   .banner-int, .int-link { display: none !important; }
   body { page: internal; }
 }
@@ -302,7 +386,7 @@ footer.doc-footer .stamp { font-family: var(--font-mono); font-size: 0.75rem; }
 <!--/int-->
 <header class="cover">
  <div class="wrap">
-  <div class="letterhead"><svg xmlns="http://www.w3.org/2000/svg" class="wm-screen" viewBox="10 20 330 60" role="img" aria-label="Northwind Studio"><text x="20" y="70" font-family="Test Sans" font-size="48" fill="#FFFFFF">NORTHWIND</text><rect x="300" y="30" width="4" height="40" rx="2" fill="#2A9D8F"/></svg><svg xmlns="http://www.w3.org/2000/svg" class="wm-print" viewBox="10 20 330 60" aria-hidden="true"><text x="20" y="70" font-family="Test Sans" font-size="48" fill="#101820">NORTHWIND</text><rect x="300" y="30" width="4" height="40" rx="2" fill="#1F7A70"/></svg></div>
+  <div class="letterhead"><svg xmlns="http://www.w3.org/2000/svg" class="wm-screen" viewBox="10 20 350 60" role="img" aria-label="Northwind Studio"><text x="20" y="70" font-family="Test Sans" font-size="48" fill="#FFFFFF">NORTHWIND</text><rect x="350" y="30" width="4" height="40" rx="2" fill="#2A9D8F"/></svg><svg xmlns="http://www.w3.org/2000/svg" class="wm-print" viewBox="10 20 350 60" aria-hidden="true"><text x="20" y="70" font-family="Test Sans" font-size="48" fill="#101820">NORTHWIND</text><rect x="350" y="30" width="4" height="40" rx="2" fill="#1F7A70"/></svg></div>
   <div class="rule-print"></div>
   <p class="eyebrow">QA report<!--int--><span> · CARD #TRACKER-102</span><!--/int--></p>
   <h1 id="title"><span class="lead-line">Acceptance QA:</span> <span class="accent">Authoring a proposal that matches the approved design</span></h1>
@@ -327,8 +411,8 @@ footer.doc-footer .stamp { font-family: var(--font-mono); font-size: 0.75rem; }
 <section class="contents-sec">
  <div class="wrap"><nav aria-label="Contents">
   <h2 class="h3" style="margin-bottom:0.5rem">Contents</h2>
-  <ul class="toc desk"><li><a href="#summary"><span class="num">01</span><span>Summary</span></a></li><li><a href="#checked"><span class="num">02</span><span>What we checked</span></a></li><li><a href="#journeys"><span class="num">03</span><span>Journeys</span></a></li></ul>
-  <details class="toc-mobile"><summary>On this page</summary><ul class="toc"><li><a href="#summary"><span class="num">01</span><span>Summary</span></a></li><li><a href="#checked"><span class="num">02</span><span>What we checked</span></a></li><li><a href="#journeys"><span class="num">03</span><span>Journeys</span></a></li></ul></details>
+  <ul class="toc desk"><li><a href="#summary"><span class="num">01</span><span>Summary</span></a></li><li><a href="#checked"><span class="num">02</span><span>What we checked</span></a></li><li><a href="#journeys"><span class="num">03</span><span>Journeys</span></a></li><li><a href="#issues"><span class="num">04</span><span>Issues found</span></a></li><li><a href="#shots"><span class="num">05</span><span>Screenshots</span></a></li><li><a href="#how"><span class="num">06</span><span>How we tested</span></a></li></ul>
+  <details class="toc-mobile"><summary>On this page</summary><ul class="toc"><li><a href="#summary"><span class="num">01</span><span>Summary</span></a></li><li><a href="#checked"><span class="num">02</span><span>What we checked</span></a></li><li><a href="#journeys"><span class="num">03</span><span>Journeys</span></a></li><li><a href="#issues"><span class="num">04</span><span>Issues found</span></a></li><li><a href="#shots"><span class="num">05</span><span>Screenshots</span></a></li><li><a href="#how"><span class="num">06</span><span>How we tested</span></a></li></ul></details>
  </nav></div></section>
 <main>
 <section id="summary" aria-labelledby="h-summary">
@@ -393,13 +477,232 @@ footer.doc-footer .stamp { font-family: var(--font-mono); font-size: 0.75rem; }
    <tr id="j-10" role="row"><td class="c-num" role="cell">10</td><td class="c-what" role="cell"><span class="title">Use the Contents list</span><span class="desc">Could not be tried: there is no Contents list in this build.</span><!--int--><a class="int-link" href="#a-j-10" style="display:block">Technical detail ↓</a><!--/int--></td><td class="c-res" role="cell" data-label="Result"><span class="badge t-blocked"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-blocked"/></svg><span>Blocked</span></span></td><td class="c-ev" role="cell" data-label="Evidence"><span class="ev-none">Could not be tried</span></td></tr>
   </tbody></table>
  </div></div></section>
+<section id="issues" class="pb" aria-labelledby="h-issues">
+ <div class="wrap"><div class="sec-head"><span class="eyebrow">04 · Issues found</span><h2 class="h2"><span id="h-issues">8 issues found, 4 still open</span></h2></div>
+  <p class="body" style="margin-top:1rem">Ordered by severity, open issues first. Status is as of October 2, 2026.</p>
+  <div class="issues">
+<article class="issue sev-blocker" id="issue-d2" aria-labelledby="issue-d2-t">
+ <div class="issue-head"><p class="eyebrow">Issue D2</p><div class="badges"><span class="badge t-solid"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-octagon"/></svg><span>Blocker</span></span><span class="badge t-status s-verified"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-check"/></svg><span>Fixed &amp; verified</span></span></div></div>
+ <h3 class="h3" id="issue-d2-t">Creating a new proposal fails with an error when a diagram image is attached</h3>
+ <div><h4>What happens</h4><p>If you upload a diagram image and any other field on the form has a mistake, the whole screen shows an error page and everything you entered is lost.</p></div>
+ <div><h4>Steps to reproduce</h4><ol><li>Open the New proposal screen.</li><li>Add a section, set its type to Diagram and upload an image.</li><li>Add a line item set to &quot;Pick one option&quot; without choosing an option group.</li><li>Select Create proposal.</li></ol></div>
+ <div class="exp-act"><div><h4>Expected</h4><p>The form reopens with a message about the missing option group, and your image and entries are kept.</p></div><div><h4>Actual</h4><p>An error page appears and nothing is saved.</p></div></div>
+ 
+ <p class="status-line"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-check"/></svg><span>Fixed in PR #102 and PR #103; re-tested October 2, 2026.</span></p>
+ <!--int--><a class="int-link" href="#a3-d2">Root cause (appendix)</a><!--/int-->
+</article>
+<article class="issue sev-major" id="issue-d3" aria-labelledby="issue-d3-t">
+ <div class="issue-head"><p class="eyebrow">Issue D3</p><div class="badges"><span class="badge t-danger"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-triangle"/></svg><span>Major</span></span><span class="badge t-status"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-open"/></svg><span>Open</span></span></div></div>
+ <h3 class="h3" id="issue-d3-t">Phases and option groups added on the same screen cannot be chosen for a line item</h3>
+ <div><h4>What happens</h4><p>A first-time author who adds phases, option groups and line items in one pass cannot assign a line item to the phase or group they just added.</p></div>
+ <div><h4>Steps to reproduce</h4><ol><li>Open the New proposal screen.</li><li>Add a phase and an option group.</li><li>Add a line item and open its Phase and Option group choices.</li></ol></div>
+ <div class="exp-act"><div><h4>Expected</h4><p>The phase and option group you just added are listed.</p></div><div><h4>Actual</h4><p>Only phases and groups from an already saved proposal are listed.</p></div></div>
+ 
+ <p class="status-line"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-open"/></svg><span>Open as of October 2, 2026.</span></p>
+ <!--int--><a class="int-link" href="#a3-d3">Root cause (appendix)</a><!--/int-->
+</article>
+<article class="issue sev-major" id="issue-d4" aria-labelledby="issue-d4-t">
+ <div class="issue-head"><p class="eyebrow">Issue D4</p><div class="badges"><span class="badge t-danger"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-triangle"/></svg><span>Major</span></span><span class="badge t-status"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-open"/></svg><span>Open</span></span></div></div>
+ <h3 class="h3" id="issue-d4-t">The diagram image shows as a broken picture in the PDF</h3>
+ <div><h4>What happens</h4><p>The diagram looks right on screen in both themes, but the downloaded PDF shows a broken-image icon above the caption.</p></div>
+ <div><h4>Steps to reproduce</h4><ol><li>Send a proposal that has a diagram section with an image.</li><li>Download its PDF.</li><li>Go to the diagram page.</li></ol></div>
+ <div class="exp-act"><div><h4>Expected</h4><p>The diagram image appears in the PDF.</p></div><div><h4>Actual</h4><p>A broken-image icon appears above the (correct) caption.</p></div></div>
+ <p class="shot-ref"><a href="#shot-2a">View screenshot 2a</a></p>
+ <p class="status-line"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-open"/></svg><span>Open as of October 2, 2026.</span></p>
+ <!--int--><a class="int-link" href="#a3-d4">Root cause (appendix)</a><!--/int-->
+</article>
+<article class="issue sev-major" id="issue-d5" aria-labelledby="issue-d5-t">
+ <div class="issue-head"><p class="eyebrow">Issue D5</p><div class="badges"><span class="badge t-danger"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-triangle"/></svg><span>Major</span></span><span class="badge t-status"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-open"/></svg><span>Open</span></span></div></div>
+ <h3 class="h3" id="issue-d5-t">The PDF includes the website&#39;s menu bar and footer</h3>
+ <div><h4>What happens</h4><p>The on-screen proposal is clean, but the PDF adds the public website&#39;s black menu bar above the cover and an extra last page of website footer links.</p></div>
+ <div><h4>Steps to reproduce</h4><ol><li>Send a proposal.</li><li>Download its PDF.</li><li>Look at page 1 and the final page.</li></ol></div>
+ <div class="exp-act"><div><h4>Expected</h4><p>The PDF contains only the proposal.</p></div><div><h4>Actual</h4><p>A black header bar with a menu icon sits above the cover, and a fifth page shows the website footer.</p></div></div>
+ <p class="shot-ref"><a href="#shot-2b">View screenshot 2b</a></p>
+ <p class="status-line"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-open"/></svg><span>Open as of October 2, 2026.</span></p>
+ <!--int--><a class="int-link" href="#a3-d5">Root cause (appendix)</a><!--/int-->
+</article>
+<article class="issue sev-major" id="issue-d1" aria-labelledby="issue-d1-t">
+ <div class="issue-head"><p class="eyebrow">Issue D1</p><div class="badges"><span class="badge t-danger"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-triangle"/></svg><span>Major</span></span><span class="badge t-status"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-half"/></svg><span>Fixed, not yet re-tested</span></span></div></div>
+ <h3 class="h3" id="issue-d1-t">The proposal&#39;s headline and label above it cannot be set</h3>
+ <div><h4>What happens</h4><p>Every proposal falls back to the generic heading &quot;Proposal for&quot; plus the company name, with no label above it, so the approved headline cannot be reproduced.</p></div>
+ <div><h4>Steps to reproduce</h4><ol><li>Open the New proposal screen.</li><li>Look through the Details section for a title or label field.</li></ol></div>
+ <div class="exp-act"><div><h4>Expected</h4><p>Title and label fields in Details.</p></div><div><h4>Actual</h4><p>There are no such fields.</p></div></div>
+ 
+ <p class="status-line"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-half"/></svg><span>Fixed in PR #101; awaiting re-test.</span></p>
+ <!--int--><a class="int-link" href="#a3-d1">Root cause (appendix)</a><!--/int-->
+</article>
+<article class="issue sev-major" id="issue-d6" aria-labelledby="issue-d6-t">
+ <div class="issue-head"><p class="eyebrow">Issue D6</p><div class="badges"><span class="badge t-danger"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-triangle"/></svg><span>Major</span></span><span class="badge t-status"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-clock"/></svg><span>Deferred</span></span></div></div>
+ <h3 class="h3" id="issue-d6-t">The proposal has no table of contents</h3>
+ <div><h4>What happens</h4><p>The approved design has a Contents list. The built proposal has nothing like it.</p></div>
+ <div><h4>Steps to reproduce</h4><ol><li>Open any authored proposal.</li><li>Look below the cover for a Contents list.</li></ol></div>
+ <div class="exp-act"><div><h4>Expected</h4><p>A Contents list linking to each section.</p></div><div><h4>Actual</h4><p>No Contents list.</p></div></div>
+ 
+ <p class="status-line"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-clock"/></svg><span>Deferred. Reason: Being delivered as its own piece of work rather than as part of this round.</span></p>
+ <!--int--><a class="int-link" href="#a3-d6">Root cause (appendix)</a><!--/int-->
+</article>
+<article class="issue sev-minor" id="issue-d7" aria-labelledby="issue-d7-t">
+ <div class="issue-head"><p class="eyebrow">Issue D7</p><div class="badges"><span class="badge t-notes"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-circlebang"/></svg><span>Minor</span></span><span class="badge t-status"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-open"/></svg><span>Open</span></span></div></div>
+ <h3 class="h3" id="issue-d7-t">Section headings do not match the approved design</h3>
+ <div><h4>What happens</h4><p>The design shows a small coloured label above a plain heading. The built proposal joins the number and title into one heading.</p></div>
+ <div><h4>Steps to reproduce</h4><ol><li>Open any authored proposal.</li><li>Compare a section heading with the approved design.</li></ol></div>
+ <div class="exp-act"><div><h4>Expected</h4><p>A coloured label above a plain heading.</p></div><div><h4>Actual</h4><p>One combined heading with a grey number.</p></div></div>
+ 
+ <p class="status-line"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-open"/></svg><span>Open as of October 2, 2026.</span></p>
+ <!--int--><a class="int-link" href="#a3-d7">Root cause (appendix)</a><!--/int-->
+</article>
+<article class="issue sev-minor" id="issue-d8" aria-labelledby="issue-d8-t">
+ <div class="issue-head"><p class="eyebrow">Issue D8</p><div class="badges"><span class="badge t-notes"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-circlebang"/></svg><span>Minor</span></span><span class="badge t-status"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-wontfix"/></svg><span>Won&#39;t fix</span></span></div></div>
+ <h3 class="h3" id="issue-d8-t">The &quot;Body&quot; field in Details never appears in the proposal</h3>
+ <div><h4>What happens</h4><p>Authors naturally fill in the first field on the form, and that text silently disappears from what the client sees.</p></div>
+ <div><h4>Steps to reproduce</h4><ol><li>Open the New proposal screen.</li><li>Type text into the Body field in Details.</li><li>Preview the proposal.</li></ol></div>
+ <div class="exp-act"><div><h4>Expected</h4><p>The text appears somewhere, or the field is clearly marked as not shown.</p></div><div><h4>Actual</h4><p>The text appears nowhere.</p></div></div>
+ 
+ <p class="status-line"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-wontfix"/></svg><span>Won&#39;t fix. Reason: The field is meant for private notes; we will relabel it so that is clear.</span></p>
+ <!--int--><a class="int-link" href="#a3-d8">Root cause (appendix)</a><!--/int-->
+</article>
+  </div>
+  <div class="notes-block"><h3 class="h3">Notes (not issues)</h3>
+<article class="note card" id="note-n1">
+ <div class="badges"><span class="badge t-info"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-eye"/></svg><span>Observed</span></span><span class="eyebrow">Note N1</span></div>
+ <h4 class="h3">The preview screen cannot make a PDF</h4>
+ <p>The PDF only exists after a proposal has been sent; the admin preview has no PDF option. This is how it is built, not a fault.</p>
+ <p><strong>What we recommend:</strong> Mention it in any author guidance so nobody looks for a PDF button on the preview.</p>
+</article>
+  </div>
+ </div></section>
+<section id="shots" aria-labelledby="h-shots">
+ <div class="wrap-wide"><div class="sec-head"><span class="eyebrow">05 · Screenshots</span><h2 class="h2"><span id="h-shots">What we saw</span></h2></div>
+  <p class="body" style="margin-top:1rem">Select any picture to see it full size.</p>
+  <div class="shot-group"><h3 class="h3">On-screen result</h3><div class="shots">
+   <figure><button class="thumb" type="button" id="shot-1a" data-cap="Authored proposal, light theme" data-w="1024"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABAAAAAAwAQMAAAC15pp+AAAAA1BMVEWzf8fNxU+5AAAYO0lEQVR4AQEwGM/nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGDAAAU0vAWkAAAAASUVORK5CYII=" alt="The authored proposal in the light theme with its dark cover and four-figure strip"><span class="chip chip-x" aria-hidden="true"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-expand"/></svg>Expand</span><span class="sr-only">View full size: Authored proposal, light theme</span></button><figcaption><span class="vchip">Light</span><span class="sid">1a</span>Authored proposal, light theme</figcaption></figure>
+   <figure><button class="thumb" type="button" id="shot-1b" data-cap="Authored proposal, dark theme" data-w="1024"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABAAAAAAwAQMAAAC15pp+AAAAA1BMVEV2t5s7X1uLAAAYO0lEQVR4AQEwGM/nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGDAAAU0vAWkAAAAASUVORK5CYII=" alt="The authored proposal in the dark theme with its diagram and roadmap sections"><span class="chip chip-x" aria-hidden="true"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-expand"/></svg>Expand</span><span class="sr-only">View full size: Authored proposal, dark theme</span></button><figcaption><span class="vchip">Dark</span><span class="sid">1b</span>Authored proposal, dark theme</figcaption></figure>
+   <figure class="phone"><button class="thumb" type="button" id="shot-1c" data-cap="Authored proposal, phone width" data-w="390"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYYAAAAwAQMAAAAvqk96AAAAA1BMVEWLpKhYfJuMAAAJa0lEQVR4AQFgCZ/2AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACWAAAXeZjsYAAAAASUVORK5CYII=" alt="The authored proposal at phone width"><span class="chip chip-x" aria-hidden="true"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-expand"/></svg>Expand</span><span class="sr-only">View full size: Authored proposal, phone width</span></button><figcaption><span class="vchip">Phone</span><span class="sid">1c</span>Authored proposal, phone width</figcaption></figure>
+  </div></div>
+  <div class="shot-group"><h3 class="h3">Downloaded PDF</h3><div class="shots">
+   <figure><button class="thumb" type="button" id="shot-2a" data-cap="PDF, first page" data-w="1024"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABAAAAAAwAQMAAAC15pp+AAAAA1BMVEW5ca3ztm+nAAAYO0lEQVR4AQEwGM/nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGDAAAU0vAWkAAAAASUVORK5CYII=" alt="First page of the downloaded PDF with a black website menu bar above the cover"><span class="chip chip-x" aria-hidden="true"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-expand"/></svg>Expand</span><span class="sr-only">View full size: PDF, first page</span></button><figcaption><span class="vchip">PDF</span><span class="sid">2a</span>PDF, first page</figcaption></figure>
+   <figure><button class="thumb" type="button" id="shot-2b" data-cap="PDF, last page" data-w="1024"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABAAAAAAwAQMAAAC15pp+AAAAA1BMVEXWwaLER1CTAAAYO0lEQVR4AQEwGM/nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGDAAAU0vAWkAAAAASUVORK5CYII=" alt="Last page of the downloaded PDF showing the website footer links"><span class="chip chip-x" aria-hidden="true"><svg class="g" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><use href="#g-expand"/></svg>Expand</span><span class="sr-only">View full size: PDF, last page</span></button><figcaption><span class="vchip">PDF</span><span class="sid">2b</span>PDF, last page</figcaption></figure>
+  </div></div>
+ </div></section>
+<section id="how" aria-labelledby="h-how">
+ <div class="wrap"><div class="sec-head"><span class="eyebrow">06 · How we tested</span><h2 class="h2"><span id="h-how">How we tested</span></h2></div>
+  <div class="how-text"><p>We tested in a pre-release test environment that mirrors the live product but holds no real client data. We built the sample proposal ourselves using only the admin screens, then compared it with the approved design in light and dark themes and as a downloaded PDF. The sample records were deleted afterwards, and the live product was not changed.</p></div>
+ </div></section>
+<!--int--><section id="appendix" class="pb appendix" aria-labelledby="h-appx"><div class="wrap-wide"><div class="appendix-box">
+ <span class="eyebrow">A · Internal appendix</span><h2 class="h2" id="h-appx">Internal appendix — not in the client version</h2>
+ <h3 class="h3" id="a1">A1 · Environment &amp; access</h3>
+ <p>CANARY-INT-FAIL staging server https://app.example.test; Lead id 9003 (QAMOCK Sample Prospect), Proposal id 9004.</p>
+ <h3 class="h3" id="a2">A2 · Journey technical detail</h3>
+ <h4 id="a-j-1">Journey 1 <a class="backlink" href="#j-1">back to journey</a></h4>
+ <p>CANARY-TECH-1 Via /admin/reports/new then /admin/reports/:id/edit, saved incrementally.</p>
+ <h4 id="a-j-2">Journey 2 <a class="backlink" href="#j-2">back to journey</a></h4>
+ <p>CANARY-INTERNAL-J2 the title column exists but the form never permits it.</p>
+ <h4 id="a-j-3">Journey 3 <a class="backlink" href="#j-3">back to journey</a></h4>
+ <p>CANARY-INTERNAL-J3 Phase/Option-group selects list only persisted rows.</p>
+ <h4 id="a-j-4">Journey 4 <a class="backlink" href="#j-4">back to journey</a></h4>
+ <p>CANARY-INTERNAL-J4 The upload field errors on an unsaved record.</p>
+ <h4 id="a-j-5">Journey 5 <a class="backlink" href="#j-5">back to journey</a></h4>
+ <p>CANARY-INTERNAL-J5 Summary via the rich text editor; diagram section 2; roadmap section 3.</p>
+ <h4 id="a-j-6">Journey 6 <a class="backlink" href="#j-6">back to journey</a></h4>
+ <p>CANARY-INTERNAL-J6 Price range renders from the option prices.</p>
+ <h4 id="a-j-7">Journey 7 <a class="backlink" href="#j-7">back to journey</a></h4>
+ <p>CANARY-INTERNAL-J7 Section header markup fuses number and title in one H2.</p>
+ <h4 id="a-j-8">Journey 8 <a class="backlink" href="#j-8">back to journey</a></h4>
+ <p>CANARY-INTERNAL-J8 Admin preview route does not support .pdf.</p>
+ <h4 id="a-j-9">Journey 9 <a class="backlink" href="#j-9">back to journey</a></h4>
+ <p>CANARY-INTERNAL-J9 Print cover uses the light wordmark.</p>
+ <h4 id="a-j-10">Journey 10 <a class="backlink" href="#j-10">back to journey</a></h4>
+ <p>CANARY-INTERNAL-J10 Searched the document template for a contents list, zero matches.</p>
+ <h3 class="h3" id="a3">A3 · Issue root cause</h3>
+ <h4 id="a3-d2">Issue D2 <a class="backlink" href="#issue-d2">back to issue</a></h4>
+ <p>CANARY-INTERNAL-D2 app/components/upload_component.html.erb:7 needs a saved record. TRACKER-104.</p>
+ <h4 id="a3-d3">Issue D3 <a class="backlink" href="#issue-d3">back to issue</a></h4>
+ <p>CANARY-INTERNAL-D3 the line item choices list only saved phases and groups.</p>
+ <h4 id="a3-d4">Issue D4 <a class="backlink" href="#issue-d4">back to issue</a></h4>
+ <p>CANARY-INTERNAL-D4 app/views/reports/show.pdf.erb:12 inlines fonts but not the diagram image.</p>
+ <h4 id="a3-d5">Issue D5 <a class="backlink" href="#issue-d5">back to issue</a></h4>
+ <p>CANARY-INTERNAL-D5 ReportPdfService renders inside the site layout.</p>
+ <h4 id="a3-d1">Issue D1 <a class="backlink" href="#issue-d1">back to issue</a></h4>
+ <p>CANARY-INTERNAL-D1 app/controllers/admin/reports_controller.rb:40-52 (report_params). TRACKER-103.</p>
+ <h4 id="a3-d6">Issue D6 <a class="backlink" href="#issue-d6">back to issue</a></h4>
+ <p>CANARY-INTERNAL-D6 no contents list in Reports::DocumentComponent.</p>
+ <h4 id="a3-d7">Issue D7 <a class="backlink" href="#issue-d7">back to issue</a></h4>
+ <p>CANARY-INTERNAL-D7 app/components/reports/document_component.html.erb:30-34.</p>
+ <h4 id="a3-d8">Issue D8 <a class="backlink" href="#issue-d8">back to issue</a></h4>
+ <p>CANARY-INTERNAL-D8 the top-level body field is never rendered; only section bodies are.</p>
+ <h3 class="h3" id="a4">A4 · QA process &amp; tooling notes</h3>
+ <ul><li>CANARY-INTERNAL-PROCESS TRACKER-102, TRACKER-103 and TRACKER-104 were commented with repro detail; none were closed.</li></ul>
+ <h3 class="h3" id="a5">A5 · Test data &amp; cleanup</h3>
+ <p>CANARY-INTERNAL-CLEANUP Lead 9003 and Proposal 9004 deleted after the test.</p>
+ <h3 class="h3" id="a6">A6 · Sources</h3>
+ <p>CANARY-INTERNAL-SOURCES QA/2026-10-01-TRACKER-102-layout-check.md; main @ a1b2c3d.</p>
+ <h3 class="h3" id="a7">A7 · Internal-only captures</h3>
+ <p>No internal-only captures.</p>
+</div></div></section><!--/int-->
 </main>
 <footer class="doc-footer"><div class="wrap">
  <p class="brandrow"><span>Prepared by <strong>Northwind Studio</strong></span></p>
  <p>Contact: <a href="mailto:hello@example.com">hello@example.com</a></p>
  <p>Confidential — prepared for Example Outfitters as part of our engagement. Please share only within your team.</p>
- <!--int--><p class="stamp">Internal build · source sha256 ed8345a8874e68533bd0ae7ca8c57e0aad8dd29f3dd9586c4cbb46a48b5464ca · schema version 1</p><!--/int-->
+ <!--int--><p class="stamp">Internal build · source sha256 735922143956a8d7acfc3dd74d09361fdaf05aca8512af08d2a75aa148c0c5d6 · schema version 1</p><!--/int-->
 </div></footer>
+<dialog id="lb" aria-labelledby="lb-cap">
+ <div class="lb-head"><div><p id="lb-cap"></p><p id="lb-count"></p></div>
+  <div class="lb-btns"><button type="button" id="lb-prev">Prev</button><button type="button" id="lb-next">Next</button><button type="button" id="lb-close">Close</button></div></div>
+ <div class="lb-body" tabindex="0" role="region" aria-label="Full-size screenshot"><img id="lb-img" alt=""></div>
+ <p id="lb-live" class="sr-only" aria-live="polite"></p>
+</dialog>
+<script>
+(function () {
+  var lb = document.getElementById('lb');
+  if (!lb || !lb.showModal) return;
+  var img = document.getElementById('lb-img');
+  var cap = document.getElementById('lb-cap');
+  var count = document.getElementById('lb-count');
+  var live = document.getElementById('lb-live');
+  var body = lb.querySelector('.lb-body');
+  var thumbs = [].slice.call(document.querySelectorAll('button.thumb'));
+  var idx = 0;
+  var start = 0;
+  var invoker = null;
+
+  function show(i) {
+    idx = (i + thumbs.length) % thumbs.length;
+    var t = thumbs[idx];
+    var pic = t.querySelector('img');
+    img.src = pic.src;
+    img.alt = pic.alt;
+    img.style.width = t.dataset.w + 'px';
+    cap.textContent = t.dataset.cap;
+    count.textContent = (idx + 1) + ' of ' + thumbs.length;
+    live.textContent = 'Screenshot ' + (idx + 1) + ' of ' + thumbs.length + ': ' + t.dataset.cap;
+    body.scrollTop = 0;
+  }
+
+  thumbs.forEach(function (t, i) {
+    t.addEventListener('click', function () {
+      invoker = t;
+      start = i;
+      show(i);
+      lb.showModal();
+    });
+  });
+  document.getElementById('lb-prev').addEventListener('click', function () { show(idx - 1); });
+  document.getElementById('lb-next').addEventListener('click', function () { show(idx + 1); });
+  document.getElementById('lb-close').addEventListener('click', function () { lb.close(); });
+  lb.addEventListener('keydown', function (e) {
+    var inPane = body.contains(e.target);
+    if (e.key === 'ArrowLeft' && !inPane) { e.preventDefault(); show(idx - 1); }
+    if (e.key === 'ArrowRight' && !inPane) { e.preventDefault(); show(idx + 1); }
+    if (e.key === 'Escape') { e.preventDefault(); lb.close(); }
+  });
+  lb.addEventListener('click', function (e) { if (e.target === lb) lb.close(); });
+  lb.addEventListener('close', function () {
+    var target = idx === start ? invoker : thumbs[idx];
+    if (target) target.focus();
+  });
+})();
+</script>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
 <symbol id="g-check" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.25"/><path d="M5 8.3 7.2 10.5 11 5.8"/></symbol>
 <symbol id="g-notes" viewBox="0 0 16 16"><circle cx="7.5" cy="8.5" r="5.75"/><path d="M4.7 8.8 6.8 10.9 10.3 6.6"/><circle cx="13" cy="3" r="2.3" fill="currentColor" stroke="none"/></symbol>

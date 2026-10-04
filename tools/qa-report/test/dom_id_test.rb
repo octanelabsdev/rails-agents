@@ -1,6 +1,6 @@
 require_relative "test_helper"
 
-# Review: element ids are slugs of authored ids, so two ids that slug alike would give the page duplicate anchors.
+# Element ids are slugs of authored ids, so two ids that slug alike would give the page duplicate anchors.
 class DomIdTest < Minitest::Test
   def journeys_named(*ids)
     source_from(:pass_with_notes) do |data|

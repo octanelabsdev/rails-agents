@@ -14,7 +14,7 @@ module QaReport
     def self.default
       new(name: "Example Studio", contact_email: "hello@example.com",
           wordmark_on_dark: default_wordmark("#FFFFFF"), wordmark_on_light: default_wordmark("#0F1115"),
-          view_box: "0 0 400 100")
+          view_box: "0 0 580 100")
     end
 
     def self.load(path)
@@ -61,7 +61,7 @@ module QaReport
     end
 
     def self.default_wordmark(fill)
-      %(<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100"><text x="0" y="68" font-family="system-ui, sans-serif" ) +
+      %(<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 100"><text x="0" y="68" font-family="system-ui, sans-serif" ) +
         %(font-size="56" font-weight="800" fill="#{fill}">EXAMPLE STUDIO</text></svg>)
     end
 

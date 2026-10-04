@@ -19,6 +19,32 @@ class RenderBrandTest < Minitest::Test
     end
   end
 
+  # QA on card B: the default mark was cropped to "EXAMPLE STUD"; 0.72 em per heavy capital is a generous width.
+  def test_default_wordmark_text_fits_its_view_box
+    svg = QaReport::Brand.default.wordmark(:light, class_name: "wm")
+    _, _, width, height = svg[/\bviewBox="([^"]+)"/, 1].split.map(&:to_f)
+    label = text(element(svg, "text"))
+    size = svg[/\bfont-size="([\d.]+)"/, 1].to_f
+    x = svg[/<text\b[^>]*\bx="([\d.]+)"/, 1].to_f
+
+    assert_equal "EXAMPLE STUDIO", label
+    assert_operator width, :>=, x + label.size * size * 0.72, "the wordmark text runs past its viewBox"
+    assert_operator height, :>=, size, "the wordmark text is taller than its viewBox"
+  end
+
+  # QA: the test brand's last letter ran under its accent bar; text, then bar, must both sit inside the crop.
+  def test_test_brand_wordmark_text_clears_its_bar_and_fits_its_view_box
+    svg = neutral_brand.wordmark(:light, class_name: "wm")
+    left, _, width, = svg[/\bviewBox="([^"]+)"/, 1].split.map(&:to_f)
+    label = text(element(svg, "text"))
+    text_end = svg[/<text\b[^>]*\bx="([\d.]+)"/, 1].to_f + label.size * svg[/\bfont-size="([\d.]+)"/, 1].to_f * 0.72
+    bar = svg[/<rect\b[^>]*\bx="[\d.]+"[^>]*>/] || flunk("the test wordmark has no accent bar")
+    bar_x = bar[/\bx="([\d.]+)"/, 1].to_f
+
+    assert_operator bar_x, :>=, text_end, "the wordmark text runs under its accent bar"
+    assert_operator left + width, :>=, bar_x + bar[/\bwidth="([\d.]+)"/, 1].to_f, "the crop cuts off the accent bar"
+  end
+
   # B-R17 with the neutral test brand: the configured name and wordmark render.
   def test_configured_brand_renders_on_the_cover
     marks = wordmarks(client_html(:pass_with_notes))
@@ -30,13 +56,13 @@ class RenderBrandTest < Minitest::Test
   # AC22 (B-R17): the full-bleed background rect is stripped and the configured viewBox applied.
   def test_wordmark_background_rect_is_stripped_and_view_box_applied
     wordmarks(client_html(:pass_with_notes)).each do |svg|
-      assert_match(/\A<svg\b[^>]*\bviewBox="10 20 330 60"/, svg)
+      assert_match(/\A<svg\b[^>]*\bviewBox="10 20 350 60"/, svg)
       refute_match(/<rect\b(?![^>]*\bx=)[^>]*\bwidth="400"[^>]*\bheight="100"/, svg, "background rect survived")
-      assert_match(/<rect\b[^>]*\bx="300"/, svg, "the accent bar is part of the mark and must stay")
+      assert_match(/<rect\b[^>]*\bx="350"/, svg, "the accent bar is part of the mark and must stay")
     end
   end
 
-  # Review: a wordmark exported with an XML prolog and a comment still inlines as a clean <svg>.
+  # A wordmark exported with an XML prolog and a comment still inlines as a clean <svg>.
   def test_wordmark_prolog_and_comment_stay_out_of_the_inline_svg
     with_brand_copy do |dir, config|
       File.write(File.join(dir, "wordmark-on-dark.svg"),
@@ -53,7 +79,7 @@ class RenderBrandTest < Minitest::Test
     end
   end
 
-  # Review: a wordmark file with no <svg> is a config error naming the file, not a crash mid-render.
+  # A wordmark file with no <svg> is a config error naming the file, not a crash mid-render.
   def test_a_wordmark_with_no_svg_tag_is_a_brand_config_error
     with_brand_copy do |dir, config|
       File.write(File.join(dir, "wordmark-on-dark.svg"), "<p>not a drawing</p>\n")
@@ -62,14 +88,14 @@ class RenderBrandTest < Minitest::Test
     end
   end
 
-  # Review: a numeric font family is a config error, not a NoMethodError.
+  # A numeric font family is a config error, not a NoMethodError.
   def test_a_non_text_font_family_is_a_brand_config_error
     with_brand_copy(edit: ->(data) { data["fonts"][0]["family"] = 123 }) do |_, config|
       assert_brand_error(config) { QaReport::Brand.load(config) }
     end
   end
 
-  # Review: an empty brand.yml is a config error, not a NoMethodError on nil.
+  # An empty brand.yml is a config error, not a NoMethodError on nil.
   def test_an_empty_brand_config_is_a_brand_config_error
     with_brand_copy do |_, config|
       File.write(config, "")
@@ -78,7 +104,7 @@ class RenderBrandTest < Minitest::Test
     end
   end
 
-  # Review: a non-numeric font weight names the config file.
+  # A non-numeric font weight names the config file.
   def test_a_non_numeric_font_weight_is_a_brand_config_error
     with_brand_copy(edit: ->(data) { data["fonts"][0]["weight"] = "bold" }) do |_, config|
       assert_brand_error(config) { QaReport::Brand.load(config) }

@@ -1,0 +1,12 @@
+<% dom_id = issue_dom_id(issue["id"]) -%>
+<% status_glyph, status_words = status_line(issue) -%>
+<article class="issue sev-<%= h(issue["severity"].downcase) %>" id="<%= dom_id %>" aria-labelledby="<%= dom_id %>-t">
+ <div class="issue-head"><p class="eyebrow">Issue <%= h(issue["id"]) %></p><div class="badges"><%= badge(SEVERITY_BADGE, issue["severity"]) %><%= badge(ISSUE_BADGE, issue["status"]) %></div></div>
+ <h3 class="h3" id="<%= dom_id %>-t"><%= h(issue["title_plain"]) %></h3>
+ <div><h4>What happens</h4><p><%= h(issue["impact_plain"]) %></p></div>
+ <div><h4>Steps to reproduce</h4><ol><% issue["steps_plain"].each do |step| %><li><%= h(step) %></li><% end %></ol></div>
+ <div class="exp-act"><div><h4>Expected</h4><p><%= h(issue["expected_plain"]) %></p></div><div><h4>Actual</h4><p><%= h(issue["actual_plain"]) %></p></div></div>
+ <%= issue_screenshot_link(issue) %>
+ <p class="status-line"><%= glyph(status_glyph) %><span><%= h(status_words) %></span></p>
+ <%= int(root_cause_link(issue)) %>
+</article>
