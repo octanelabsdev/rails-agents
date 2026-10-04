@@ -9,6 +9,9 @@
 *.bak
 *~
 
+# Per-user Claude Code settings (machine-specific permissions)
+.claude/settings.local.json
+
 # Opencode (kept locally, not tracked for now)
 .opencode/
 opencode/
