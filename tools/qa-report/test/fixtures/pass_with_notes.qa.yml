@@ -58,34 +58,34 @@ journeys:
     evidence: []
     evidence_note_plain: Confirmed in the saved proposal
     technical_detail: >-
-      CANARY-INTERNAL-J1 POST /api/v1/leads/9002/proposals with Zebra, Apple, Mango -> 201 {"id":9005}; stored positions
-      with reorder(:id) 0,1,2.
+      CANARY-INTERNAL-J1 POST /api/widgets with Zebra, Apple, Mango -> 201 {"id":9005}; stored order
+      0,1,2.
   - id: 2
     title_plain: Edit a section and save
     description_plain: We changed the label on the first section in the admin form and saved. The label updated and nothing moved.
     result: PASS
     evidence: []
     evidence_note_plain: Confirmed in the saved proposal
-    technical_detail: CANARY-INTERNAL-J2 Edited section 1 part_label (now "Part Z edited"); positions unchanged 0,1,2.
+    technical_detail: CANARY-INTERNAL-J2 Edited section 1 label (now "Part Z edited"); order unchanged 0,1,2.
   - id: 3
     title_plain: View the proposal as an administrator
     description_plain: The preview lists the sections, summary figures and option groups in the order they were sent.
     result: PASS
     evidence: [1a, 1b]
-    technical_detail: CANARY-INTERNAL-J3 /admin/proposals/9005/preview renders Zebra -> Apple -> Mango (DOM offsets 327/358/389).
+    technical_detail: CANARY-INTERNAL-J3 /admin/reports/9005/preview renders Zebra -> Apple -> Mango (DOM offsets 327/358/389).
   - id: 4
     title_plain: Add a roadmap section
     description_plain: We added a roadmap section in the admin screens. Its phases show in the order sent, and the new section sits last.
     result: PASS
     evidence: [2a, 2b]
-    technical_detail: CANARY-INTERNAL-J4 4th section "Roadmap Exhibit" (exhibit_type roadmap) stored at position 3.
+    technical_detail: CANARY-INTERNAL-J4 4th section "Roadmap" stored at order 3.
   - id: 5
     title_plain: Send extra ordering hints
     description_plain: Position numbers sent along with items cause no error and are not used; the sent order wins.
     result: PASS
     evidence: []
     evidence_note_plain: Confirmed in the saved proposal
-    technical_detail: CANARY-INTERNAL-J5 POST with position inside sections (5, 1) -> 201; proposal 9006, deleted.
+    technical_detail: CANARY-INTERNAL-J5 POST with order hints (5, 1) -> 201; record 9006, deleted.
   - id: 6
     title_plain: Light and phone display
     description_plain: >-
@@ -93,13 +93,13 @@ journeys:
       covered (Note 2).
     result: PASS
     evidence: [1a, 1b]
-    technical_detail: CANARY-INTERNAL-J6 scrollWidth 390 = viewport.
+    technical_detail: CANARY-INTERNAL-J6 page width 390 = viewport.
   - id: 7
     title_plain: Open an older proposal
     description_plain: A proposal made before this fix still opens, but the order of its sections is not guaranteed (Note 1).
     result: OBSERVED
     evidence: [3a]
-    technical_detail: CANARY-INTERNAL-J7 Legacy proposal 9007 has all 5 sections stored at position 0.
+    technical_detail: CANARY-INTERNAL-J7 Older record 9007 has all 5 sections stored at order 0.
 
 issues: []
 
@@ -118,6 +118,11 @@ notes:
       This round checked the light theme and phone width. We do not have a dark-theme capture to show, so we are not
       claiming that it works.
     recommendation_plain: Add a dark-theme check to the next round of testing.
+    coverage_column: Dark
+  - id: N3
+    client_facing: false
+    title_plain: CANARY-INTERNAL-NOTE3 The admin list paginates at 25 rows
+    body_plain: Only seen on the admin side, so it is not something the client needs to know.
 
 screenshots:
   - id: 1a
@@ -131,10 +136,20 @@ screenshots:
     pixels_clean: true
   - id: 1b
     file: pass_with_notes/screenshots/1b.png
+    dpr: 2
     group_plain: Proposal preview
     variant: Phone
     alt: Proposal preview at phone width listing the sections Zebra, Apple and Mango in that order
     caption: Preview, phone width
+    focal: top
+    visibility: client
+    pixels_clean: true
+  - id: 1c
+    file: pass_with_notes/screenshots/1c.png
+    group_plain: Proposal preview
+    variant: Light
+    alt: Proposal preview in the light theme after the first section label was edited, still in the same order
+    caption: Preview after editing, light theme
     focal: top
     visibility: client
     pixels_clean: true
@@ -149,6 +164,7 @@ screenshots:
     pixels_clean: true
   - id: 2b
     file: pass_with_notes/screenshots/2b.png
+    dpr: 2
     group_plain: Roadmap section
     variant: Phone
     alt: Roadmap section at phone width listing phases Alpha, Bravo and Charlie
@@ -158,6 +174,7 @@ screenshots:
     pixels_clean: true
   - id: 3a
     file: pass_with_notes/screenshots/3a.png
+    dpr: 2
     group_plain: Older proposal
     variant: Phone
     alt: An older proposal at phone width showing its five numbered sections
@@ -165,11 +182,21 @@ screenshots:
     focal: top
     visibility: client
     pixels_clean: true
+  - id: 4a
+    file: pass_with_notes/screenshots/4a.png
+    group_plain: Admin tools
+    variant: Light
+    alt: The admin API token list
+    caption: CANARY-INTERNAL-CAPTION API token list
+    focal: top
+    visibility: internal
+    internal_reason: CANARY-INTERNAL-REASON Shows the staging API token list, which the client must not see.
+    pixels_clean: false
 
 internal:
-  environment: CANARY-INTERNAL-ENV staging server https://app.example.test (qa@example.com); ApiToken id 9001.
+  environment: CANARY-INTERNAL-ENV staging server https://app.example.test (qa@example.com); test token 9001.
   process_notes:
     - CANARY-INTERNAL-PROCESS First payload used kind fixed and got 422 'fixed' is not a valid kind.
     - CANARY-INTERNAL-PROCESS curl to *.test needed a sandbox bypass (loopback).
-  cleanup: CANARY-INTERNAL-CLEANUP Proposals 9005 and 9006 destroyed; ApiToken 9001 revoked; lead 9002 untouched.
+  cleanup: CANARY-INTERNAL-CLEANUP Records 9005 and 9006 deleted; test token 9001 revoked; record 9002 untouched.
   sources: CANARY-INTERNAL-SOURCES QA/2026-10-02-TRACKER-101-composer-child-order.md; main @ 1a2b3c4, working tree clean.

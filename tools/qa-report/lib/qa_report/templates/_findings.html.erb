@@ -1,0 +1,14 @@
+<section id="issues"<%= ' class="pb"' if data["issues"].any? %> aria-labelledby="h-issues">
+ <div class="wrap"><div class="sec-head"><span class="eyebrow"><%= section_label("issues") %></span><h2 class="h2"><span id="h-issues"><%= h(copy.issues_heading) %></span></h2></div>
+<% if data["issues"].empty? -%>
+  <div class="zero"><%= glyph("check") %><div><h3 class="h3">No issues found</h3><p>We didn't find anything that needed fixing in this round of testing.</p></div></div>
+<% else -%>
+  <p class="body" style="margin-top:1rem">Ordered by severity, open issues first. Status is as of <%= h(report_date) %>.</p>
+  <div class="issues">
+<% data["issues"].each do |issue| -%>
+<%= partial("issue", issue: issue) -%>
+<% end -%>
+  </div>
+<% end -%>
+<%= notes_block_html -%>
+ </div></section>

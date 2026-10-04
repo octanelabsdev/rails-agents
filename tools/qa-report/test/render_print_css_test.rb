@@ -106,7 +106,7 @@ class RenderPrintCssTest < Minitest::Test
     end
   end
 
-  # Review (B-R21): the colophon never sits alone on the last printed page.
+  # B-R21: the colophon never sits alone on the last printed page.
   def test_the_footer_stays_with_the_content_before_it_in_print
     html = client_html(:fail)
     kept = print_rules(html).select { |rule| rule.selectors.any? { |part| part.match?(/(\A| )footer(\.[\w-]+)*\z/) } }

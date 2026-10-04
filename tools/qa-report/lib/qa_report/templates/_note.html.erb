@@ -1,0 +1,8 @@
+<article class="note card" id="note-<%= h(Source.slug(note["id"])) %>">
+ <div class="badges"><%= badge(JOURNEY_STATUS, note_status(note)) %><span class="eyebrow">Note <%= h(note["id"]) %></span></div>
+ <h4 class="h3"><%= h(note["title_plain"]) %></h4>
+ <%= paragraphs(note["body_plain"]) %>
+<% if note["recommendation_plain"] -%>
+ <p><strong>What we recommend:</strong> <%= h(note["recommendation_plain"]) %></p>
+<% end -%>
+</article>

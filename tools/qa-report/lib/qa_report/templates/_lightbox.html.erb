@@ -1,0 +1,57 @@
+<dialog id="lb" aria-labelledby="lb-cap">
+ <div class="lb-head"><div><p id="lb-cap"></p><p id="lb-count"></p></div>
+  <div class="lb-btns"><button type="button" id="lb-prev">Prev</button><button type="button" id="lb-next">Next</button><button type="button" id="lb-close">Close</button></div></div>
+ <div class="lb-body" tabindex="0" role="region" aria-label="Full-size screenshot"><img id="lb-img" alt=""></div>
+ <p id="lb-live" class="sr-only" aria-live="polite"></p>
+</dialog>
+<script>
+(function () {
+  var lb = document.getElementById('lb');
+  if (!lb || !lb.showModal) return;
+  var img = document.getElementById('lb-img');
+  var cap = document.getElementById('lb-cap');
+  var count = document.getElementById('lb-count');
+  var live = document.getElementById('lb-live');
+  var body = lb.querySelector('.lb-body');
+  var thumbs = [].slice.call(document.querySelectorAll('button.thumb'));
+  var idx = 0;
+  var start = 0;
+  var invoker = null;
+
+  function show(i) {
+    idx = (i + thumbs.length) % thumbs.length;
+    var t = thumbs[idx];
+    var pic = t.querySelector('img');
+    img.src = pic.src;
+    img.alt = pic.alt;
+    img.style.width = t.dataset.w + 'px';
+    cap.textContent = t.dataset.cap;
+    count.textContent = (idx + 1) + ' of ' + thumbs.length;
+    live.textContent = 'Screenshot ' + (idx + 1) + ' of ' + thumbs.length + ': ' + t.dataset.cap;
+    body.scrollTop = 0;
+  }
+
+  thumbs.forEach(function (t, i) {
+    t.addEventListener('click', function () {
+      invoker = t;
+      start = i;
+      show(i);
+      lb.showModal();
+    });
+  });
+  document.getElementById('lb-prev').addEventListener('click', function () { show(idx - 1); });
+  document.getElementById('lb-next').addEventListener('click', function () { show(idx + 1); });
+  document.getElementById('lb-close').addEventListener('click', function () { lb.close(); });
+  lb.addEventListener('keydown', function (e) {
+    var inPane = body.contains(e.target);
+    if (e.key === 'ArrowLeft' && !inPane) { e.preventDefault(); show(idx - 1); }
+    if (e.key === 'ArrowRight' && !inPane) { e.preventDefault(); show(idx + 1); }
+    if (e.key === 'Escape') { e.preventDefault(); lb.close(); }
+  });
+  lb.addEventListener('click', function (e) { if (e.target === lb) lb.close(); });
+  lb.addEventListener('close', function () {
+    var target = idx === start ? invoker : thumbs[idx];
+    if (target) target.focus();
+  });
+})();
+</script>

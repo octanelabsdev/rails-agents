@@ -20,4 +20,27 @@ class GoldenTest < Minitest::Test
     assert_includes html, "No screenshot"
     assert_golden "fail-blocked-client-internal.html", html
   end
+
+  # QA: with no client screenshots there is no 05 Screenshots, How we tested is 05 and Contents has 5 links.
+  def test_fail_without_client_screenshots_client_html_matches_its_golden_file
+    client = client_html(without_client_screenshots)
+
+    refute_includes client, "05 · Screenshots"
+    assert_includes client, "05 · How we tested"
+    assert_golden "fail-no-client-screenshots-client.html", client
+  end
+
+  # One golden per test, because update mode skips right after writing.
+  def test_fail_without_client_screenshots_internal_html_matches_its_golden_file
+    assert_golden "fail-no-client-screenshots-internal.html", internal_html(without_client_screenshots)
+  end
+
+  private
+
+  def without_client_screenshots
+    source_from(:fail) do |data|
+      data["screenshots"].each { |shot| shot.merge!("visibility" => "internal", "internal_reason" => "Shows the admin side.") }
+      data["journeys"].each { |journey| journey["evidence_note_plain"] ||= "Checked directly" }
+    end
+  end
 end

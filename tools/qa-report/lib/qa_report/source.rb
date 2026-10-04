@@ -67,19 +67,23 @@ module QaReport
         "id" => client(:id), "severity" => client(:text), "status" => client(:text),
         "title_plain" => client(:text), "impact_plain" => client(:text), "steps_plain" => client(TEXTS),
         "expected_plain" => client(:text), "actual_plain" => client(:text),
-        "screenshot" => client(:id, optional: true), "status_note_plain" => client(:text, optional: true),
+        "screenshot" => client(:id, optional: true), "fixed_in" => client(TEXTS, optional: true),
+        "retested_on" => client(:date, optional: true), "status_reason_plain" => client(:text, optional: true),
         "root_cause" => internal(:text, optional: true)
       },
       note: {
         "id" => client(:id), "title_plain" => client(:text), "body_plain" => client(:text),
         "recommendation_plain" => client(:text, optional: true),
+        "coverage_column" => client(:text, optional: true),
         "client_facing" => internal(:bool, optional: true)
       },
       screenshot: {
         "id" => client(:id), "file" => client(:text), "group_plain" => client(:text),
         "variant" => client(:text), "caption" => client(:text),
         "alt" => client(:text, optional: true), "focal" => client(:text, optional: true),
-        "visibility" => internal(:text, optional: true), "pixels_clean" => internal(:bool, optional: true)
+        "dpr" => client(:positive_integer, optional: true),
+        "visibility" => internal(:text, optional: true), "pixels_clean" => internal(:bool, optional: true),
+        "internal_reason" => internal(:text, optional: true)
       },
       verdict_override: { "verdict" => internal(:text), "reason" => internal(:text, optional: true) },
       internal: {
@@ -92,14 +96,17 @@ module QaReport
       text: [->(value) { value.is_a?(String) }, "text"],
       id: [->(value) { value.is_a?(String) || value.is_a?(Integer) }, "an id"],
       date: [->(value) { value.is_a?(Date) }, "a date"],
-      bool: [->(value) { [true, false].include?(value) }, "true or false"]
+      bool: [->(value) { [true, false].include?(value) }, "true or false"],
+      positive_integer: [->(value) { value.is_a?(Integer) && value.positive? }, "a positive whole number"]
     }.freeze
 
     SEVERITIES = %w[BLOCKER MAJOR MINOR TRIVIAL].freeze
     OPEN = "OPEN"
     FIXED_UNVERIFIED = "FIXED · NOT YET RE-TESTED"
     FIXED_VERIFIED = "FIXED & VERIFIED"
-    STATUSES = [OPEN, FIXED_VERIFIED, FIXED_UNVERIFIED, "DEFERRED", "WON'T FIX"].freeze
+    DEFERRED = "DEFERRED"
+    WONT_FIX = "WON'T FIX"
+    STATUSES = [OPEN, FIXED_VERIFIED, FIXED_UNVERIFIED, DEFERRED, WONT_FIX].freeze
     REQUIREMENT_RESULTS = ["MET", "NOT MET", "BLOCKED"].freeze
     JOURNEY_RESULTS = ["PASS", "FAIL", "BLOCKED", "OBSERVED", "NOT TESTED"].freeze
     VERDICTS = ["PASS", "PASS WITH NOTES", "FAIL"].freeze
@@ -114,6 +121,8 @@ module QaReport
     PNG_SIGNATURE = "\x89PNG\r\n\x1A\n".b
     JPEG_SIGNATURE = "\xFF\xD8\xFF".b
     HEADER_BYTES = 12
+    PNG_MIN_BYTES = 24
+    WEBP_MIN_BYTES = 30
 
     attr_reader :data, :root, :sha256
 
@@ -199,7 +208,8 @@ module QaReport
       return problems unless problems.empty?
 
       [check_requirements_present, check_enums, check_override, check_duplicate_ids, check_references,
-       check_failing_journeys, check_images].flatten
+       check_failing_journeys, check_visibility, check_status_reasons, check_note_columns, check_internal_reasons,
+       check_images].flatten
     end
 
     def check_shape(hash, kind, path)
@@ -299,6 +309,40 @@ module QaReport
       end
     end
 
+    # A missing or mistyped value would drop the screenshot from both the body and the appendix.
+    def check_visibility
+      screenshots.each_with_index.filter_map do |shot, index|
+        next if %w[client internal].include?(shot["visibility"])
+
+        "#{Source.label("screenshots", shot, index)}.visibility must be client or internal"
+      end
+    end
+
+    def check_status_reasons
+      issues.each_with_index.filter_map do |issue, index|
+        next unless issue["status"] == WONT_FIX && issue["status_reason_plain"].to_s.strip.empty?
+
+        "#{Source.label("issues", issue, index)}.status_reason_plain is required when the status is #{WONT_FIX}"
+      end
+    end
+
+    def check_note_columns
+      columns = @data["coverage"]["columns"]
+      notes.each_with_index.filter_map do |note, index|
+        next if !note.key?("coverage_column") || columns.include?(note["coverage_column"])
+
+        "#{Source.label("notes", note, index)}.coverage_column must be one of the coverage columns"
+      end
+    end
+
+    def check_internal_reasons
+      screenshots.each_with_index.filter_map do |shot, index|
+        next unless shot["visibility"] == "internal" && shot["internal_reason"].to_s.strip.empty?
+
+        "#{Source.label("screenshots", shot, index)}.internal_reason is required when visibility is internal"
+      end
+    end
+
     def check_images
       screenshots.each_with_index.filter_map do |shot, index|
         image_problem(shot, Source.label("screenshots", shot, index))
@@ -311,8 +355,13 @@ module QaReport
 
       header = File.binread(file, HEADER_BYTES).to_s
       return "#{path}.file is too small to be an image" if header.bytesize < HEADER_BYTES
+      # The width sits at byte 16..19, so a shorter PNG cannot be sized.
+      return "#{path}.file is too small to be a PNG" if header.start_with?(PNG_SIGNATURE) && File.size(file) < PNG_MIN_BYTES
 
-      "#{path}.file is not a PNG, JPEG or WebP image" unless image?(header)
+      return "#{path}.file is not a PNG, JPEG or WebP image" unless image?(header)
+
+      # VP8 width is read at byte 26..27, VP8L at 21..24, VP8X at 24..26.
+      "#{path}.file is too small to be a WebP" if header.byteslice(0, 4) == "RIFF" && File.size(file) < WEBP_MIN_BYTES
     end
 
     # realpath, not the path text, so a symlink pointing outside the folder is caught.

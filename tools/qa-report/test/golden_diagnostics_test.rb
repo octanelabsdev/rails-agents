@@ -1,6 +1,6 @@
 require_relative "test_helper"
 
-# Review: a golden mismatch must point at the first differing line, including lines only one side has.
+# A golden mismatch must point at the first differing line, including lines only one side has.
 class GoldenDiagnosticsTest < Minitest::Test
   NAME = "zz-diagnostics-probe.html"
 

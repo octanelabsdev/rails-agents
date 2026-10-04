@@ -1,0 +1,38 @@
+<% extra = data["internal"] -%>
+<section id="appendix" class="pb appendix" aria-labelledby="h-appx"><div class="wrap-wide"><div class="appendix-box">
+ <span class="eyebrow">A · Internal appendix</span><h2 class="h2" id="h-appx">Internal appendix — not in the client version</h2>
+<% if data["verdict_override"] -%>
+ <p><strong>Verdict override:</strong> <%= h(data["verdict_override"]["verdict"]) %>. Reason: <%= h(data["verdict_override"]["reason"]) %></p>
+<% end -%>
+ <h3 class="h3" id="a1">A1 · Environment &amp; access</h3>
+ <%= appendix_text(extra["environment"]) %>
+ <h3 class="h3" id="a2">A2 · Journey technical detail</h3>
+<% data["journeys"].each do |journey| -%>
+ <h4 id="a-<%= journey_dom_id(journey["id"]) %>">Journey <%= h(journey["id"]) %> <a class="backlink" href="#<%= journey_dom_id(journey["id"]) %>">back to journey</a></h4>
+ <%= technical_detail(journey) %>
+<% end -%>
+ <h3 class="h3" id="a3">A3 · Issue root cause</h3>
+<% root_cause_issues.each do |issue| -%>
+ <h4 id="a3-<%= h(Source.slug(issue["id"])) %>">Issue <%= h(issue["id"]) %> <a class="backlink" href="#<%= issue_dom_id(issue["id"]) %>">back to issue</a></h4>
+ <p><%= h(issue["root_cause"]) %></p>
+<% end -%>
+<% if root_cause_issues.empty? -%>
+ <p>No issue root causes to record.</p>
+<% end -%>
+ <h3 class="h3" id="a4">A4 · QA process &amp; tooling notes</h3>
+ <%= appendix_list(extra["process_notes"]) %>
+ <h3 class="h3" id="a5">A5 · Test data &amp; cleanup</h3>
+ <%= appendix_text(extra["cleanup"]) %>
+ <h3 class="h3" id="a6">A6 · Sources</h3>
+ <%= appendix_text(extra["sources"]) %>
+ <h3 class="h3" id="a7">A7 · Internal-only captures</h3>
+<% if internal_shots.empty? -%>
+ <p>No internal-only captures.</p>
+<% else -%>
+ <div class="shots">
+<% internal_shots.each do |shot| -%>
+  <%= figure(shot, reason: shot["internal_reason"]) %>
+<% end -%>
+ </div>
+<% end -%>
+</div></div></section>

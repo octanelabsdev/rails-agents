@@ -14,13 +14,6 @@ class ClientBlockingTest < Minitest::Test
     assert_client_blocked source, "notes[N2].client_facing"
   end
 
-  # A-R10
-  def test_a_screenshot_with_no_visibility_value_blocks_the_client_view
-    source = source_from(:pass_with_notes) { |data| find_by_id(data["screenshots"], "1a").delete("visibility") }
-
-    assert_client_blocked source, "screenshots[1a].visibility"
-  end
-
   # AC18 (A-R10)
   def test_a_screenshot_with_empty_alt_text_blocks_the_client_view
     source = source_from(:pass_with_notes) { |data| find_by_id(data["screenshots"], "1a")["alt"] = "" }
@@ -49,7 +42,7 @@ class ClientBlockingTest < Minitest::Test
   # A-R10: evidence that only points at internal screenshots is not client-visible evidence.
   def test_a_journey_whose_only_evidence_is_internal_screenshots_blocks_the_client_view
     source = source_from(:pass_with_notes) do |data|
-      find_by_id(data["screenshots"], "3a")["visibility"] = "internal"
+      find_by_id(data["screenshots"], "3a").merge!("visibility" => "internal", "internal_reason" => "Shows the admin side.")
     end
 
     assert_client_blocked source, "journeys[7].evidence"

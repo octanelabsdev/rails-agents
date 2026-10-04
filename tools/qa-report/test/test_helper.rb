@@ -45,7 +45,8 @@ module QaReportTestHelper
       "id" => id, "severity" => severity, "status" => status,
       "title_plain" => "Issue #{id}", "impact_plain" => "Something happens.",
       "steps_plain" => ["Open the screen."], "expected_plain" => "It works.", "actual_plain" => "It does not.",
-      "status_note_plain" => "As of October 2, 2026.", "root_cause" => "CANARY-INTERNAL-#{id}"
+      "fixed_in" => ["PR #1"], "retested_on" => Date.new(2026, 10, 2), "status_reason_plain" => "A reason.",
+      "root_cause" => "CANARY-INTERNAL-#{id}"
     }
   end
 
@@ -113,9 +114,9 @@ module QaReportTestHelper
 
   def approved = QaReport::ClientStatus.approved(CLIENT_FILE)
 
-  def renderer_for(source, brand: neutral_brand, client: CLIENT_NAME, status: approved)
+  def renderer_for(source, brand: neutral_brand, client: CLIENT_NAME, status: approved, encoder: FakeEncoder.new)
     source = load_fixture(source) if source.is_a?(Symbol)
-    QaReport::Renderer.new(source, brand: brand, client: client, status: status)
+    QaReport::Renderer.new(source, brand: brand, client: client, status: status, encoder: encoder)
   end
 
   def client_html(source, **options) = renderer_for(source, **options).client_html
@@ -146,6 +147,20 @@ module QaReportTestHelper
           "regenerate with QA_REPORT_UPDATE_GOLDEN=1 and review the diff"
   end
 
+  # A decodable 1-bit palette PNG, stored (level 0) so bytes never vary by zlib build; a private chunk pads exact sizes.
+  def self.sized_png(width, height, rgb = [208, 213, 221], size: nil)
+    chunk = ->(type, data) { [data.bytesize].pack("N") + type + data + [Zlib.crc32(type + data)].pack("N") }
+    row = "\0".b * (1 + (width + 7) / 8)
+    head = "\x89PNG\r\n\x1A\n".b + chunk.call("IHDR", [width, height, 1, 3, 0, 0, 0].pack("NNCCCCC")) +
+           chunk.call("PLTE", rgb.pack("C3")) + chunk.call("IDAT", Zlib::Deflate.deflate(row * height, Zlib::NO_COMPRESSION))
+    pad = size ? size - head.bytesize - 24 : 0
+    raise ArgumentError, "a #{width}x#{height} PNG is larger than #{size} bytes" if pad.negative?
+
+    head + (size ? chunk.call("qaPd", "\0".b * pad) : "".b) + chunk.call("IEND", "")
+  end
+
+  def self.png_size(bytes) = bytes.byteslice(16, 8).unpack("NN")
+
   # Smallest valid PNG: 1x1 RGB, so fixtures stay stdlib-generated and decodable.
   def self.png(red, green, blue)
     chunk = ->(type, data) { [data.bytesize].pack("N") + type + data + [Zlib.crc32(type + data)].pack("N") }
@@ -153,6 +168,29 @@ module QaReportTestHelper
       chunk.call("IHDR", [1, 1, 8, 2, 0, 0, 0].pack("NNCCCCC")) +
       chunk.call("IDAT", Zlib::Deflate.deflate([0, red, green, blue].pack("C*"))) +
       chunk.call("IEND", "")
+  end
+end
+
+# Stands in for cwebp/vips: a real PNG at the requested width; sizes maps a file's basename to raw bytes, or [q80, q65].
+class FakeEncoder
+  attr_reader :calls
+
+  def initialize(sizes: {})
+    @sizes = sizes
+    @calls = []
+  end
+
+  def format = "png"
+
+  def encode(path, width:, quality:)
+    name = File.basename(path, ".*")
+    @calls << [name, width, quality]
+    source_width, source_height = QaReportTestHelper.png_size(File.binread(path, 24).b)
+    # A 48 px strip keeps golden files small; width stays real so data-w matches the image.
+    height = (source_height.to_f * width / source_width).round.clamp(1, 48)
+    rgb = Digest::SHA256.digest(name).bytes.first(3).map { |byte| 96 + byte / 2 }
+    size = Array(@sizes[name]).then { |sizes| quality == 65 ? sizes.last : sizes.first }
+    QaReportTestHelper.sized_png(width, height, rgb, size: size)
   end
 end
 

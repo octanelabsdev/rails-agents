@@ -20,6 +20,10 @@
  </nav></div></section>
 <main>
 <%= partial("overview") -%>
+<%= partial("findings") -%>
+<%= partial("screenshots") if client_shots.any? -%>
+<%= partial("how") -%>
+<%= appendix_html %>
 </main>
 <footer class="doc-footer"><div class="wrap">
  <p class="brandrow"><span>Prepared by <strong><%= h(brand.name) %></strong></span></p>
@@ -27,6 +31,7 @@
  <p><%= h(confidentiality) %></p>
  <%= int(%(<p class="stamp">#{h(stamp)}</p>)) %>
 </div></footer>
+<%= lightbox_html -%>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
 <%= partial("sprite") -%>
 </defs></svg>
