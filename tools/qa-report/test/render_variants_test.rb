@@ -1,4 +1,5 @@
 require_relative "test_helper"
+require "qa_report/build"
 
 # B-R1, B-R13, B-R15, B-R18: one source, two files that differ only by marked internal regions.
 class RenderVariantsTest < Minitest::Test
@@ -62,10 +63,12 @@ class RenderVariantsTest < Minitest::Test
 
   # AC35 (B-R18)
   def test_awaiting_banner_names_the_approve_command
-    html = internal_html(:pass_with_notes, status: QaReport::ClientStatus.awaiting(STEM))
+    command = QaReport::Build.approve_command("/project/QA/#{STEM}.qa.yml")
+    html = internal_html(:pass_with_notes, status: QaReport::ClientStatus.awaiting(command: command))
 
-    assert_equal "#{BANNER} Client version: awaiting owner approval — run qa-report approve QA/#{STEM}.qa.yml",
-      banner(html)
+    assert_match(%r{\A#{Regexp.escape(Shellwords.escape(RbConfig.ruby))} /\S+/bin/qa-report approve /project/QA/#{STEM}\.qa\.yml\z}, command)
+    assert_equal "#{BANNER} Client version: awaiting owner approval — run #{command}", banner(html),
+      "the banner must show the runnable approve command verbatim"
   end
 
   # AC35 (B-R18)

@@ -54,14 +54,14 @@ module QaReport
         path = Source.label("screenshots", shot, index)
         next [] unless shot["visibility"] == "client"
 
-        [("#{path}.alt must not be empty" if blank?(shot["alt"])),
+        [("#{path}.alt must not be empty" if Source.blank?(shot["alt"])),
          ("#{path}.pixels_clean must be true for a client screenshot" unless shot["pixels_clean"] == true)].compact
       end
     end
 
     def journey_problems(source, client_ids)
       source.journeys.each_with_index.filter_map do |journey, index|
-        next if (journey["evidence"] & client_ids).any? || !blank?(journey["evidence_note_plain"])
+        next if (journey["evidence"] & client_ids).any? || !Source.blank?(journey["evidence_note_plain"])
 
         "#{Source.label("journeys", journey, index)}.evidence needs a client-visible screenshot " \
           "or an evidence_note_plain"
@@ -69,7 +69,7 @@ module QaReport
     end
 
     def override_problems(source)
-      return [] unless source.override && blank?(source.override["reason"])
+      return [] unless source.override && Source.blank?(source.override["reason"])
 
       ["verdict_override.reason is required when the verdict is overridden"]
     end
@@ -93,8 +93,6 @@ module QaReport
     end
 
     def pick(hash, kind) = copy(hash.slice(*Source.client_keys(kind)))
-
-    def blank?(value) = value.to_s.strip.empty?
 
     def copy(value)
       case value
