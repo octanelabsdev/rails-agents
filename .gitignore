@@ -16,7 +16,7 @@ opencode/
 # Personal layer — never push to this PUBLIC repo. Handed off privately.
 # global-CLAUDE.md carries personal workflow/vault config; docs/ name internal services.
 # codex/templates/global-AGENTS.md is the Codex twin — same personal voice/comms/vault.
-templates/
+/templates/
 docs/
 codex/templates/
 

@@ -1,0 +1,10 @@
+.banner-int { display: flex; gap: 0.75rem; align-items: flex-start; justify-content: center; background: var(--color-amber-100); color: var(--color-amber-800); border-bottom: 2px solid var(--color-amber-800); padding: 0.75rem 1.25rem; font-size: 0.875rem; line-height: 1.4rem; font-weight: 700; }
+.banner-int p { max-width: 64rem; overflow-wrap: anywhere; }
+.banner-int .sub { font-weight: 400; }
+.banner-int a { color: inherit; }
+.int-link { font-size: 0.8125rem; font-weight: 700; color: var(--color-amber-800); display: inline-block; margin-top: 0.25rem; }
+@media print {
+  .banner-int, .int-link { display: none !important; }
+  body { page: internal; }
+}
+@page internal { @top-center { content: "INTERNAL \2014  NOT FOR CLIENT DISTRIBUTION"; font: 800 8pt system-ui, sans-serif; color: #92400E; } }

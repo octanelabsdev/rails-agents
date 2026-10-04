@@ -1,0 +1,41 @@
+<section id="summary" aria-labelledby="h-summary">
+ <div class="wrap"><div class="sec-head"><span class="eyebrow">01 · Summary</span><h2 class="h2"><span id="h-summary"><%= h(copy.summary_heading) %></span></h2></div>
+  <p class="lead" style="margin-top:1rem"><%= h(data["summary"]["lead"]) %></p>
+  <div class="sum-grid">
+<% SUMMARY_BLOCKS.each do |key, heading| -%>
+   <div><h3 class="h3"><%= heading %></h3><%= paragraphs(data["summary"][key]) %></div>
+<% end -%>
+  </div>
+ </div></section>
+<section id="checked" class="pb" aria-labelledby="h-checked">
+ <div class="wrap"><div class="sec-head"><span class="eyebrow">02 · What we checked</span><h2 class="h2"><span id="h-checked"><%= h(copy.checked_heading) %></span></h2></div>
+  <p class="body" style="margin-top:1rem">These are the things this piece of work was meant to deliver. Each one was checked on its own.</p>
+  <h3 class="h3" style="margin-top:1.75rem;margin-bottom:0.85rem">Requirements</h3>
+  <ol class="reqs">
+<% data["requirements"].each do |requirement| -%>
+   <li><%= badge(REQUIREMENT_STATUS, requirement["result"]) %><span class="req-text"><%= h(requirement["text_plain"]) %></span><%= journey_links(requirement["journeys"]) %></li>
+<% end -%>
+  </ol>
+  <h3 class="h3" style="margin-top:2rem;margin-bottom:0.85rem">Where we checked</h3>
+  <div class="scroll-region" tabindex="0" role="region" aria-label="Coverage matrix; scrolls sideways on small screens">
+   <table class="matrix"><caption class="sr-only">Coverage matrix: result for each area in each viewing mode</caption>
+   <thead><tr><th scope="col">Area</th><% data["coverage"]["columns"].each do |column| %><th scope="col"><%= h(column) %></th><% end %></tr></thead>
+   <tbody>
+<% data["coverage"]["rows"].each do |row| -%>
+    <tr><th scope="row"><%= h(row["area_plain"]) %></th><% row["cells"].each do |cell| %><td><%= coverage_cell(cell) %></td><% end %></tr>
+<% end -%>
+   </tbody></table>
+  </div>
+ </div></section>
+<section id="journeys" class="pb" aria-labelledby="h-journeys">
+ <div class="wrap"><div class="sec-head"><span class="eyebrow">03 · Journeys</span><h2 class="h2"><span id="h-journeys"><%= h(copy.journeys_heading) %></span></h2></div>
+  <p class="body" style="margin-top:1rem">A journey is one thing a person would actually do with the product, from start to finish.</p></div>
+ <div class="wrap-wide" style="margin-top:1.75rem"><div class="j-wrap">
+  <table class="j-table" role="table"><caption class="sr-only">Journeys we walked through, with result and evidence</caption>
+  <thead role="rowgroup"><tr role="row"><th scope="col" role="columnheader" class="c-num">#</th><th scope="col" role="columnheader">What we checked</th><th scope="col" role="columnheader">Result</th><th scope="col" role="columnheader">Evidence</th></tr></thead>
+  <tbody role="rowgroup">
+<% data["journeys"].each do |journey| -%>
+   <tr id="<%= journey_dom_id(journey["id"]) %>"<%= ' class="is-fail"' if journey["result"] == "FAIL" %> role="row"><td class="c-num" role="cell"><%= h(journey["id"]) %></td><td class="c-what" role="cell"><span class="title"><%= h(journey["title_plain"]) %></span><span class="desc"><%= h(journey["description_plain"]) %></span><%= int(technical_detail_link(journey)) %></td><td class="c-res" role="cell" data-label="Result"><%= badge(JOURNEY_STATUS, journey["result"]) %></td><td class="c-ev" role="cell" data-label="Evidence"><%= evidence(journey) %></td></tr>
+<% end -%>
+  </tbody></table>
+ </div></div></section>
