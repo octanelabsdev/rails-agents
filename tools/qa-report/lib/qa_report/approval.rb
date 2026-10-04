@@ -8,7 +8,7 @@ require_relative "projection"
 
 module QaReport
   # The renderer version an approval records; a different one makes the approval stale.
-  RENDERER = "qa-report 0.1"
+  RENDERER = "qa-report 0.2"
 
   # Reads and compares approvals; the approve command is the tool's only writer.
   module Approval

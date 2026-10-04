@@ -8,12 +8,13 @@ module QaReport
   class Markdown
     ISSUE_STATUSES = [Source::OPEN, Source::DEFERRED].freeze
 
-    def initialize(source, config:, stem:, client_status:, files:, client_file: nil)
+    def initialize(source, config:, stem:, client_status:, files:, html_sha256:, client_file: nil)
       @source = source
       @config = config
       @stem = stem
       @client_status = client_status
       @files = files
+      @html_sha256 = html_sha256
       @client_file = client_file
       @copy = Copy.new(source)
     end
@@ -30,7 +31,7 @@ module QaReport
         "project" => data["project_plain"], "verdict" => @source.verdict, "verdict_overridden" => !@source.override.nil?,
         "client" => (@config.client if @config.client_variant?), "variants" => @config.variants,
         "client_status" => @client_status, "source" => "#{@stem}.qa.yml", "source_sha256" => @source.sha256,
-        "schema_version" => data["schema_version"], "files" => @files,
+        "schema_version" => data["schema_version"], "files" => @files, "html_sha256" => @html_sha256,
         "tags" => ["qa-report", "verdict/#{@source.verdict.downcase.tr(" ", "-")}"]
       }
     end

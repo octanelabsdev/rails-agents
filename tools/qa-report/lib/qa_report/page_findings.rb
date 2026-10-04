@@ -45,8 +45,11 @@ module QaReport
     def issue_screenshot_link(issue)
       return "" unless client_shot_ids.include?(issue["screenshot"])
 
-      %(<p class="shot-ref"><a href="##{shot_dom_id(issue["screenshot"])}">View screenshot #{h(issue["screenshot"])}</a></p>)
+      %(<p class="shot-ref"><a href="##{shot_dom_id(issue["screenshot"])}">View screenshot #{h(issue["screenshot"])}</a>#{print_ref(issue["screenshot"])}</p>)
     end
+
+    # Paper cannot be clicked, so print swaps the link for a plain cross-reference to the screenshots section.
+    def print_ref(id) = %(<span class="print-only">See screenshot #{h(id)}</span>)
 
     def client_shots = data["screenshots"].select { |shot| client_shot_ids.include?(shot["id"]) }
 
