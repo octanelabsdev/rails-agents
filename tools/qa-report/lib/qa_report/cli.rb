@@ -8,6 +8,7 @@ require_relative "source"
 require_relative "config"
 require_relative "approval"
 require_relative "build"
+require_relative "pdf"
 require_relative "skeleton"
 
 module QaReport
@@ -19,8 +20,8 @@ module QaReport
       Commands:
         new <card> <slug> [--date YYYY-MM-DD]   start an empty QA source in ./QA
         build <source>                          write the .md, the internal HTML and, once approved, the client HTML
-        approve <source>                        approve the client file, from a terminal only
-        pdf <source>                            write the PDFs (not yet implemented)
+        approve <source>                        approve the client file and write the PDFs, from a terminal only
+        pdf <source>                            print the PDFs with headless Chrome, for after a build
         pending                                 list the sources awaiting approval
 
       Derived tokens catch identifiers (hosts, emails, ids, code names); list codenames and people's names in `deny` in qa-report.yml.
@@ -37,7 +38,7 @@ module QaReport
       when "new" then new_source(args)
       when "build" then with_source(args, "build <source>") { |path| Build.new(path).run }
       when "approve" then approve(args)
-      when "pdf" then with_source(args, "pdf <source>") { refuse("pdf is not yet implemented") }
+      when "pdf" then with_source(args, "pdf <source>") { |path| Pdf.new(path).run }
       when "pending" then pending
       else refuse("unknown command #{command.inspect}\n\n#{USAGE}")
       end
@@ -91,7 +92,7 @@ module QaReport
       config.check_usable!
       return refuse("this project has no client variant, so there is nothing to approve") unless config.client_variant?
 
-      return refuse("run build first: #{File.basename(path, ".qa.yml")}.md is missing or describes an older version of the source") unless built_from?(path, source)
+      return refuse("run build first: #{File.basename(path, ".qa.yml")}.md is missing or describes an older version of the source") unless Build.built_from?(path, source)
 
       approver = approver_name
       return refuse("set QA_REPORT_APPROVED_BY or git config user.name so the approval names you") unless approver
@@ -109,16 +110,7 @@ module QaReport
       code = build.run
       return code unless code.zero?
 
-      puts "The approval and the client HTML were written. The PDF is not yet implemented, so it is still pending."
-      3
-    end
-
-    # The owner reviews the internal report the last build wrote, so it must describe this exact source.
-    def built_from?(path, source)
-      note = path.sub(/\.qa\.yml\z/, ".md")
-      File.file?(note) && YAML.safe_load(File.read(note)[/\A---\n(.*?)\n---\n/m, 1].to_s, permitted_classes: [Date]).then { |meta| meta.is_a?(Hash) && meta["source_sha256"] == source.sha256 }
-    rescue Psych::Exception
-      false
+      Pdf.new(path, source: source, config: config).run
     end
 
     def write_approval(path, approver, digest)

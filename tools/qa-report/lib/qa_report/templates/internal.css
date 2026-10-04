@@ -25,4 +25,3 @@ pre { font-family: var(--font-mono); font-size: 0.875rem; background: var(--colo
   .banner-int, .int-link { display: none !important; }
   body { page: internal; }
 }
-@page internal { @top-center { content: "INTERNAL \2014  NOT FOR CLIENT DISTRIBUTION"; font: 800 8pt system-ui, sans-serif; color: #92400E; } }

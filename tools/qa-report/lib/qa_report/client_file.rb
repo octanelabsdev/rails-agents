@@ -13,6 +13,8 @@ module QaReport
       "#{Source.slug(client)}-qa-report-#{tested_on.iso8601}-#{feature_slug(title)}"
     end
 
+    def pdf_for(name) = name.sub(/\.html\z/, ".pdf")
+
     def feature_slug(title)
       slug = Source.slug(title)
       return slug if slug.length <= MAX_FEATURE

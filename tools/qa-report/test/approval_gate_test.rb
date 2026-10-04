@@ -1,5 +1,6 @@
 require_relative "test_helper"
 require_relative "support/cli_harness"
+require_relative "support/pdf_probe"
 require "pty"
 require "timeout"
 
@@ -10,11 +11,11 @@ class ApprovalGateTest < Minitest::Test
   APPROVER = "Test Owner"
 
   # Runs approve on a pseudo-terminal and types the answer at the prompt; skipped where no PTY can be opened.
-  def approve_at_terminal(source, answer)
+  def approve_at_terminal(source, answer, env: {})
     output = +""
     status = nil
     begin
-      PTY.spawn(clean_env("QA_REPORT_APPROVED_BY" => APPROVER), RbConfig.ruby, BIN, "approve", source,
+      PTY.spawn(clean_env("QA_REPORT_APPROVED_BY" => APPROVER).merge(env), RbConfig.ruby, BIN, "approve", source,
                 chdir: Dir.tmpdir) do |reader, writer, pid|
         Timeout.timeout(60) do
           output << read_until(reader, /type approve/i)
@@ -81,7 +82,7 @@ class ApprovalGateTest < Minitest::Test
       digest = QaReport::Approval.digest(QaReport::Source.load(source), client: CLIENT_NAME, brand: QaReport::Config.find(source).brand)
       qa_report("build", source)
 
-      output, status = approve_at_terminal(source, "approve")
+      output, status = approve_at_terminal(source, "approve", env: { "QA_REPORT_CHROME" => "/nonexistent/qa-report-test/Google Chrome" })
 
       assert_includes output, digest, "approve must print the digest the owner is approving"
       assert_includes output, "Everything we checked works.", "approve must print the client summary"
@@ -93,7 +94,28 @@ class ApprovalGateTest < Minitest::Test
       assert_equal digest, approval["client_digest"]
       refute_empty approval["renderer"].to_s
       assert_equal [PASS_CLIENT_FILE], client_files(project), "approve must go on to build the client file"
-      assert_includes [0, 3], status.exitstatus, "approve ends with build's result, or 3 while the PDF is pending"
+      assert_equal 3, status.exitstatus, "with Chrome unavailable, approve ends with pdf's exit 3:\n#{output}"
+      assert output.lines.any? { |line| line.start_with?("PDF PENDING") }, "approve must pass on pdf's PDF PENDING line:\n#{output}"
+    end
+  end
+
+  # A successful approve goes on to print both PDFs, so it exits 0 once they are written.
+  def test_typing_approve_at_a_terminal_with_chrome_available_writes_both_pdfs_and_exits_0
+    with_vault do |vault|
+      project = make_project(vault)
+      source = place_source(project, :pass_with_notes)
+      qa_report("build", source)
+
+      Dir.mktmpdir("chrome") do |bin|
+        output, status = approve_at_terminal(source, "approve", env: { "QA_REPORT_CHROME" => PdfProbe.write_standin(bin) })
+
+        assert_equal 0, status.exitstatus, "approve did not finish once the PDFs could be written:\n#{output}"
+        refute_match(/PDF PENDING|not yet implemented/, output)
+        assert File.file?(qa_file(project, PASS_CLIENT_FILE.sub(/\.html\z/, ".pdf"))), "approve wrote no client PDF:\n#{output}"
+        assert File.file?(qa_file(project, "#{PASS_STEM}-internal.pdf")), "approve wrote no internal PDF:\n#{output}"
+      ensure
+        PdfProbe.reap(PdfProbe.recorded_pids(bin))
+      end
     end
   end
 
@@ -193,6 +215,23 @@ class ApprovalGateTest < Minitest::Test
 
       pending = qa_report("pending", chdir: project)
       assert_includes pending.out, "#{PASS_STEM}.qa.yml  awaiting re-approval"
+    end
+  end
+
+  # The renderer changed in card E (print layout), so an approval of the 0.1 page no longer covers what gets sent.
+  def test_an_approval_recorded_under_qa_report_0_1_awaits_re_approval
+    refute_equal "qa-report 0.1", QaReport::RENDERER, "the renderer version was not bumped for the changed client page"
+
+    with_vault do |vault|
+      project = make_project(vault)
+      source = place_source(project, :pass_with_notes)
+      forge_approval(source, renderer: "qa-report 0.1")
+
+      run = qa_report("build", source)
+
+      assert_equal 0, run.code, run.out
+      assert_match(/awaiting re-approval/i, run.out, "an approval of the 0.1 renderer must not cover the current client page")
+      assert_empty client_files(project)
     end
   end
 

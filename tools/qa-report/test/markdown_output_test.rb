@@ -6,7 +6,7 @@ class MarkdownOutputTest < Minitest::Test
   include CliHarness
 
   KEYS = %w[title date card project verdict verdict_overridden client variants client_status source source_sha256
-            schema_version files tags].freeze
+            schema_version files html_sha256 tags].freeze
 
   def build_markdown(fixture, **project_options)
     with_vault do |vault|

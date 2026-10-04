@@ -189,4 +189,16 @@ class RenderScreenshotsTest < Minitest::Test
     assert_match(/\brole="region"/, open_tag)
     assert_match(/\baria-label="[^"]+"/, open_tag)
   end
+
+  # Print reads these as "See screenshot 2a"; on screen they stay clickable jumps to the thumbnail.
+  def test_on_screen_journey_and_issue_evidence_stay_clickable_links_to_their_screenshots
+    html = client_html(:fail)
+
+    %w[1a 1b 1c 2a 2b].each do |id|
+      assert_includes html, %(<a href="#shot-#{id}">Screenshot #{id}</a>), "the journey evidence for #{id} is no longer a link on screen"
+    end
+    %w[2a 2b].each do |id|
+      assert_includes html, %(<a href="#shot-#{id}">View screenshot #{id}</a>), "the issue card's evidence for #{id} is no longer a link on screen"
+    end
+  end
 end

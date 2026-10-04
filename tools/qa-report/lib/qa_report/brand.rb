@@ -61,7 +61,7 @@ module QaReport
     end
 
     def self.default_wordmark(fill)
-      %(<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 100"><text x="0" y="68" font-family="system-ui, sans-serif" ) +
+      %(<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 100"><text x="0" y="68" font-family="Arial, Helvetica, sans-serif" ) +
         %(font-size="56" font-weight="800" fill="#{fill}">EXAMPLE STUDIO</text></svg>)
     end
 

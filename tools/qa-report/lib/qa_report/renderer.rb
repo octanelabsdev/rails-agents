@@ -211,10 +211,10 @@ module QaReport
       end
 
       def stylesheet
-        [font_faces, ":root { --font-sans: #{font_stack}; }", page_rules, template_text("report.css")].join("\n")
+        [font_faces, ":root { --font-sans: #{font_stack}; }", print_font_rule, page_rules, template_text("report.css")].join("\n")
       end
 
-      def internal_stylesheet = template_text("internal.css")
+      def internal_stylesheet = "#{template_text("internal.css")}#{internal_page_rule}"
 
       private
 
@@ -226,6 +226,17 @@ module QaReport
 
       def font_stack = [brand.font_family && %("#{brand.font_family}"), "system-ui", "sans-serif"].compact.join(", ")
 
+      # Chrome prints system-ui as Type 3 glyphs, so print falls back to a named font it embeds as TrueType.
+      def print_font_stack = [brand.font_family && %("#{brand.font_family}"), "Arial", "Helvetica", "sans-serif"].compact.join(", ")
+
+      def internal_page_rule
+        %(@page internal { @top-center { content: "INTERNAL \\2014  NOT FOR CLIENT DISTRIBUTION"; font: 800 8pt #{print_font_stack}; color: #92400E; } }\n)
+      end
+
+      def print_font_rule = "@media print { :root { --font-sans: #{print_font_stack}; } }"
+
+      def report_label = @internal && !client ? "Internal QA report" : "QA report"
+
       def font_faces
         brand.fonts.map do |font|
           %(@font-face { font-family: "#{font.family}"; font-style: normal; font-weight: #{font.weight}; font-display: swap; ) +
@@ -236,9 +247,9 @@ module QaReport
       def font_uri(font) = @embed_fonts ? "data:font/woff2;base64,#{font.data}" : Images::Placeholders::PLACEHOLDER_URI
 
       def page_rules
-        label = [brand.name, "QA report", client].compact.map { |part| css_string(part) }.join(" \\00B7  ")
+        label = [brand.name, report_label, client].compact.map { |part| css_string(part) }.join(" \\00B7  ")
         <<~CSS
-          @page { size: Letter; margin: 0.6in 0.6in 0.75in; @bottom-center { content: "#{label} \\00B7  Page " counter(page) " of " counter(pages); font: 400 8pt #{font_stack}; color: #545966; } }
+          @page { size: Letter; margin: 0.6in 0.6in 0.75in; @bottom-center { content: "#{label} \\00B7  Page " counter(page) " of " counter(pages); font: 400 8pt #{print_font_stack}; color: #545966; } }
           @page :first { @bottom-center { content: none; } }
         CSS
       end

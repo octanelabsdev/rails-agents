@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
+require "digest"
 require "fileutils"
 require "rbconfig"
 require "shellwords"
 require_relative "source"
 require_relative "config"
+require_relative "client_file"
 require_relative "renderer"
 require_relative "approval"
 require_relative "leak_check"
@@ -38,7 +40,9 @@ module QaReport
       internal_name = "#{@stem}-internal.html"
       note_name = "#{@stem}.md"
       listed = [internal_name, note_name, outcome.name].compact
-      files = { internal_name => renderer.internal_html(status: outcome.status), note_name => markdown(outcome, listed) }
+      htmls = { internal_name => renderer.internal_html(status: outcome.status) }
+      htmls[outcome.name] = outcome.html if outcome.name
+      files = { internal_name => htmls[internal_name], note_name => markdown(outcome, listed, htmls) }
       files[outcome.name] = outcome.html if outcome.name
       write(files, outcome)
       report(files, outcome, renderer)
@@ -51,15 +55,43 @@ module QaReport
       vetted_client_name(Renderer.new(@source, brand: @config.brand, client: @config.client))
     end
 
+    # The owner reviews the internal report the last build wrote, so it must describe this exact source.
+    def self.built_from?(path, source)
+      recorded = note_meta(path.sub(/\.qa\.yml\z/, ".md"))["source_sha256"]
+      !recorded.nil? && recorded == source.sha256
+    end
+
+    # True only for an HTML file that is byte-for-byte what build wrote from the current source.
+    def self.html_current?(path, source, html)
+      return false unless built_from?(path, source) && File.file?(html)
+
+      recorded = note_meta(path.sub(/\.qa\.yml\z/, ".md"))["html_sha256"]
+      recorded.is_a?(Hash) && recorded[File.basename(html)] == Digest::SHA256.file(html).hexdigest
+    end
+
+    def self.note_meta(note)
+      return {} unless File.file?(note)
+
+      meta = YAML.safe_load(File.read(note)[/\A---\n(.*?)\n---\n/m, 1].to_s, permitted_classes: [Date])
+      meta.is_a?(Hash) ? meta : {}
+    rescue Psych::Exception
+      {}
+    end
+
     # The one place that spells out how to run approve, so the printed command works from any directory.
     def self.approve_command(path)
       Shellwords.join([RbConfig.ruby, File.expand_path("../../bin/qa-report", __dir__), "approve", path])
+    end
+
+    def client_name
+      "#{ClientFile.stem(client: @config.client, tested_on: @source.data["tested_on"], title: @source.data["feature_title_plain"])}.html"
     end
 
     private
 
     def write(files, outcome)
       remove_earlier_client_files(outcome.name)
+      remove_stale_internal_pdf(files)
       Renderer.write_files(@dir, files)
     end
 
@@ -109,7 +141,7 @@ module QaReport
 
     # The one place that decides the client outcome: the scan reads a payload-free rendering, and the written file is the real one.
     def vetted_client_name(renderer)
-      name = "#{ClientFile.stem(client: @config.client, tested_on: @source.data["tested_on"], title: @source.data["feature_title_plain"])}.html"
+      name = client_name
       LeakCheck.new(@source, deny: @config.deny).check!(renderer.client_scan_html, file_name: name)
       refuse_taken_name(name)
       name
@@ -128,33 +160,34 @@ module QaReport
                   [error.message, "No client file was written."])
     end
 
-    def markdown(outcome, files)
+    def markdown(outcome, files, htmls)
       Markdown.new(@source, config: @config, stem: @stem, client_status: outcome.kind, files: files,
-                           client_file: outcome.name).to_s
+                           client_file: outcome.name, html_sha256: htmls.transform_values { |html| Digest::SHA256.hexdigest(html) }.sort.to_h).to_s
     end
 
-    # Found through the previous .md, since a changed title or client name changes the file name.
+    # Found through the previous .md, since a changed title or client name changes the file name; each client PDF shares its HTML's stem.
     def remove_earlier_client_files(keep)
-      earlier_files.each do |name|
-        next if keep && File.basename(name, ".*") == File.basename(keep, ".*")
+      earlier_client_html.each do |name|
+        next if name == keep
 
         FileUtils.rm_f(File.join(@dir, name))
+        FileUtils.rm_f(File.join(@dir, ClientFile.pdf_for(name)))
       end
     end
 
-    def earlier_files
-      listed_files(File.join(@dir, "#{@stem}.md")).select do |name|
-        name.include?("-qa-report-") && name.match?(/\.(?:html|pdf)\z/) && name != "#{@stem}-internal.html"
-      end
+    # A PDF printed from different HTML would show the old report, so it goes until pdf prints it again.
+    def remove_stale_internal_pdf(files)
+      name = "#{@stem}-internal.html"
+      recorded = self.class.note_meta(File.join(@dir, "#{@stem}.md"))["html_sha256"]
+      return if recorded.is_a?(Hash) && recorded[name] == Digest::SHA256.hexdigest(files[name])
+
+      FileUtils.rm_f(File.join(@dir, ClientFile.pdf_for(name)))
     end
 
-    def listed_files(note)
-      return [] unless File.file?(note)
-
-      meta = YAML.safe_load(File.read(note)[/\A---\n(.*?)\n---\n/m, 1].to_s, permitted_classes: [Date])
-      meta.is_a?(Hash) ? Array(meta["files"]).map { |name| File.basename(name.to_s) } : []
-    rescue Psych::Exception
-      []
+    def earlier_client_html
+      listed_files(File.join(@dir, "#{@stem}.md")).select { |name| name.include?("-qa-report-") && name.end_with?(".html") && name != "#{@stem}-internal.html" }
     end
+
+    def listed_files(note) = Array(self.class.note_meta(note)["files"]).map { |name| File.basename(name.to_s) }
   end
 end

@@ -7,7 +7,8 @@
 <style>
 @font-face { font-family: "Test Sans"; font-style: normal; font-weight: 400; font-display: swap; src: url(data:font/woff2;base64,d09GMgABAABURVNULVNBTlMtTk9ULUEtUkVBTC1GT05U) format("woff2"); }
 :root { --font-sans: "Test Sans", system-ui, sans-serif; }
-@page { size: Letter; margin: 0.6in 0.6in 0.75in; @bottom-center { content: "Northwind Studio \00B7  QA report \00B7  Example Outfitters \00B7  Page " counter(page) " of " counter(pages); font: 400 8pt "Test Sans", system-ui, sans-serif; color: #545966; } }
+@media print { :root { --font-sans: "Test Sans", Arial, Helvetica, sans-serif; } }
+@page { size: Letter; margin: 0.6in 0.6in 0.75in; @bottom-center { content: "Northwind Studio \00B7  QA report \00B7  Example Outfitters \00B7  Page " counter(page) " of " counter(pages); font: 400 8pt "Test Sans", Arial, Helvetica, sans-serif; color: #545966; } }
 @page :first { @bottom-center { content: none; } }
 
 :root {
@@ -64,6 +65,7 @@ a { color: var(--color-accent); }
 svg { flex-shrink: 0; }
 :focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
 .cover :focus-visible { outline-color: var(--brand-accent); }
+.print-only { display: none; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 [hidden] { display: none !important; }
 .muted { color: var(--color-text-muted); }
@@ -281,6 +283,9 @@ footer.doc-footer .stamp { font-family: var(--font-mono); font-size: 0.75rem; }
     --danger-solid-bg: #BE123C; --danger-solid-fg: #FFFFFF;
   }
   html { background: #FFFFFF; font-size: 14px; }
+  .print-only { display: inline !important; }
+  .shot-ref a { display: none; }
+  .ev-list a { font-weight: 400; text-decoration: none; }
   .contents-sec, dialog#lb, .chip-x, .flags, .vchip, .backlink, .no-print { display: none !important; }
   body { font-size: 1rem; }
   .wrap, .wrap-wide { max-width: none; padding-inline: 0; }
@@ -296,7 +301,7 @@ footer.doc-footer .stamp { font-family: var(--font-mono); font-size: 0.75rem; }
   .caption, .shot-group > h3 { break-after: avoid; }
   .exp-act, .status-line { break-inside: avoid; }
   th, td { padding: 0.4rem 0.6rem; }
-  .eyebrow { color: var(--color-steel-700); margin-bottom: 0.4rem; }
+  .eyebrow { color: var(--color-steel-700); margin-bottom: 0.4rem; letter-spacing: 0.08em; }
   .eyebrow::after { content: ""; display: block; height: 2px; width: 2rem; background: var(--brand-accent-deep); margin-top: 0.3rem; }
   a { color: #0F1115; text-decoration: underline; text-decoration-color: var(--color-border-strong); }
   h2.h2 { font-size: 1.3rem; }
@@ -378,7 +383,7 @@ pre { font-family: var(--font-mono); font-size: 0.875rem; background: var(--colo
   .banner-int, .int-link { display: none !important; }
   body { page: internal; }
 }
-@page internal { @top-center { content: "INTERNAL \2014  NOT FOR CLIENT DISTRIBUTION"; font: 800 8pt system-ui, sans-serif; color: #92400E; } }
+@page internal { @top-center { content: "INTERNAL \2014  NOT FOR CLIENT DISTRIBUTION"; font: 800 8pt "Test Sans", Arial, Helvetica, sans-serif; color: #92400E; } }
 </style><!--/int-->
 </head>
 <body>
