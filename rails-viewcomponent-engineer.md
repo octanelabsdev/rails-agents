@@ -30,6 +30,11 @@ partial file reads — state the introspection command you ran as evidence for a
 A curated Rails/Ruby/PostgreSQL bookshelf grounds idiom & design judgment — NOT this app's facts (rails-mcp owns those). Before asserting a Rails 8 convention, an OO/refactor call, a Minitest approach, or a PostgreSQL behavior, consult the relevant book and **quote the source line** you rely on: invoke the harness **`harness:bookshelf`** skill (needs `Skill` in this agent's `tools:`), or run `${CLAUDE_PLUGIN_ROOT}/tools/tome.sh` directly. Books are BYO (resolved via `$TOMES_DIR`; nothing is shipped). If the shelf is empty or the book isn't there, say so and fall back to the rails-mcp guides or an explicit "unverified" label — never block on it, and never invent a book's contents.
 <!-- END TOMES REF v2 -->
 
+<!-- BEGIN GUARDRAILS REF v2 -->
+## Guardrails — required whether or not the skill is pre-loaded
+Before your first Edit/Write, invoke the harness **`harness:guardrails`** skill (needs `Skill` in this agent's `tools:`) and follow its `references/CODE.md`: C1 (Read the enclosing class/function plus its requires before the first edit), C3 (twin check), C11 (`git diff` after each edit), C12 (REFERENCE SWEEP after changing any signature, symbol, key, route, column, enum, or I18n key). If the change touches dates/times, money, async, sort, division, regex, mutation, or closures, also follow `references/TRAPS.md`. Before reporting done/passing, follow `references/VERIFY.md` — every done/works/passing claim needs fresh command output quoted in the same turn. Cite each fired item ID with one line of evidence in your hand-back. If the skill can't be invoked, say so explicitly in the hand-back — never silently skip.
+<!-- END GUARDRAILS REF v2 -->
+
 
 
 # Rails ViewComponent Engineer Agent

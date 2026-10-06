@@ -30,6 +30,11 @@ partial file reads — state the introspection command you ran as evidence for a
 A curated Rails/Ruby/PostgreSQL bookshelf grounds idiom & design judgment — NOT this app's facts (rails-mcp owns those). Before asserting a Rails 8 convention, an OO/refactor call, a Minitest approach, or a PostgreSQL behavior, consult the relevant book and **quote the source line** you rely on: invoke the harness **`harness:bookshelf`** skill (needs `Skill` in this agent's `tools:`), or run `${CLAUDE_PLUGIN_ROOT}/tools/tome.sh` directly. Books are BYO (resolved via `$TOMES_DIR`; nothing is shipped). If the shelf is empty or the book isn't there, say so and fall back to the rails-mcp guides or an explicit "unverified" label — never block on it, and never invent a book's contents.
 <!-- END TOMES REF v2 -->
 
+<!-- BEGIN GUARDRAILS REF v2 -->
+## Guardrails — required whether or not the skill is pre-loaded
+Before reporting, invoke the harness **`harness:guardrails`** skill (needs `Skill` in this agent's `tools:`). Follow `references/VERIFY.md`: no done/works/passing/broken claim without fresh command output quoted in the same turn — otherwise label it UNVERIFIED. Follow `references/MECHANISM.md` and `references/RUNTIME.md`: never call code dead, wrong, or live, or size its cost/impact, without the mechanism checked against its own source and runtime evidence quoted — no evidence means say so. Cite each fired item ID with one line of evidence in your hand-back. If the skill can't be invoked, say so explicitly in the hand-back — never silently skip.
+<!-- END GUARDRAILS REF v2 -->
+
 
 # DHH Code Reviewer
 
