@@ -254,15 +254,15 @@ end
 ```ruby
 # ✅ Always use strong parameters
 def message_params
-  params.require(:message).permit(:body, :attachment, :client_message_id)
+  params.expect(message: [ :body, :attachment, :client_message_id ])
 end
 
 def user_params
-  params.require(:user).permit(:name, :email_address, :bio)
-        .tap do |p|
-          # Only allow admins to set role
-          p[:role] = params[:user][:role] if Current.user.administrator?
-        end
+  if Current.user.administrator?
+    params.expect(user: [ :name, :email_address, :bio, :role ])
+  else
+    params.expect(user: [ :name, :email_address, :bio ])
+  end
 end
 
 # ❌ Never pass params directly
@@ -360,6 +360,45 @@ SecureHeaders::Configuration.default do |config|
   config.referrer_policy = "strict-origin-when-cross-origin"
 end
 ```
+
+### 11. SSRF: Fetching a URL Someone Else Gave You
+
+Webhooks, link unfurling, avatar-from-URL, web push endpoints: every fetch of a user-supplied URL can reach your internal network and cloud metadata (`169.254.169.254`). Checking the hostname isn't enough. You have to **resolve it, check the IP, and connect to that same IP**.
+
+Use basecamp's [`surfguard`](https://github.com/basecamp/surfguard) gem (on rubygems, Ruby ≥ 3.4.5) for the address policy. It's what Fizzy uses for webhook and push delivery. It blocks private, loopback, link-local and CGNAT space, plus the IPv6 transition ranges a hand-rolled check misses (IPv4-mapped, NAT64, 6to4, Teredo). It is deliberately **not** an HTTP client: pinning, redirects and size limits are still your job.
+
+```ruby
+def post_to_destination(uri, body, headers)
+  address = Surfguard.resolve_public_ips(uri.hostname).first
+  return { error: :private_destination } unless address
+
+  http = Net::HTTP.new(uri.hostname, uri.port, nil) # nil: an env proxy would look the host up again
+  http.ipaddr = address                             # connect to the address we checked
+  http.use_ssl = uri.scheme == "https"
+  http.open_timeout = http.read_timeout = 7
+
+  request = Net::HTTP::Post.new(uri, headers).tap { |r| r.body = body }
+  response = http.request(request) { |streamed| read_with_limit(streamed, 100.kilobytes) }
+  { code: response.code.to_i }
+end
+```
+
+Rules:
+- **Check when the URL is saved and again when it's used.** DNS changes between the two.
+- **Pin.** Resolving, checking, and then letting the HTTP client resolve again is open to DNS rebinding. Only the address you checked may be used for the connection.
+- **Redirects:** don't follow them. If you have to, every hop starts over: resolve, check, pin. Redirect chains are the classic way around a one-time check.
+- **Limit what you read:** stream the body and abort past a byte limit. Set open and read timeouts.
+- Rescue the expected failures (`Surfguard::Unresolvable`, timeouts, `ECONNREFUSED`, TLS errors) as *destination* failures. See the outbox pattern in `@rails-background-jobs`.
+- If you know the set of destinations (web push vendors), add an allowlist on top. Public-IP checks are the floor, not the whole defense.
+
+### 12. Webhook Endpoints
+
+- **The destination URL can't change after create.** Updates permit only name and subscriptions (`webhook_params.except(:url)`). Pointing it somewhere else means a new webhook with a new secret.
+- Only accept `http`/`https` and validate the URL when it's saved. The SSRF check above runs again at send time.
+- Allowlist subscribable events in the model: `normalizes :subscribed_actions, with: ->(v) { Array.wrap(v).map(&:to_s).uniq & PERMITTED_ACTIONS }`.
+- Sign every payload: HMAC-SHA256 of the body using a per-webhook `has_secure_token` secret, sent with a timestamp header. Strip the signature header from any request log you show in the UI.
+- Managing webhooks requires admin access, and lookups are scoped to the tenant.
+- **Inbound** webhooks (Stripe and the like): verify the signature first, then fetch the current state from the provider's API. Don't trust the payload's contents or its delivery order.
 
 ## Performance Expertise
 
@@ -657,6 +696,9 @@ When reviewing code, check:
 - [ ] HTTPS in production (force_ssl)
 - [ ] Secure cookie settings (httponly, secure, samesite)
 - [ ] Rate limiting on sensitive endpoints
+- [ ] User-supplied URLs resolved, IP-checked and pinned before every fetch (SSRF), redirects not followed blindly
+- [ ] Webhook URLs can't change after create; payloads signed; management requires admin access
+- [ ] Record lookups scoped through the user/tenant (`Current.user.projects.find`), never `Model.find(params[:id])`
 - [ ] Proper error handling (don't expose internals)
 - [ ] Dependency updates (no known vulnerabilities)
 
