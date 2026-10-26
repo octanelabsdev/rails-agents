@@ -24,7 +24,7 @@ These agents form a **codebase-aware Rails development team** that:
 ### 🏗️ @rails-architect
 **Technical Lead & System Designer**
 
-**Model**: Claude Opus 4.6
+**Model**: Opus (`model: opus` — tracks the latest Opus)
 **Tools**: Read, Glob, Grep, Bash
 
 **Responsibilities**:
@@ -44,7 +44,7 @@ These agents form a **codebase-aware Rails development team** that:
 ### 🗄️ @rails-model-engineer
 **Data Layer Specialist**
 
-**Model**: Claude Sonnet 4.6
+**Model**: Sonnet (`model: sonnet` — tracks the latest Sonnet)
 **Tools**: Read, Write, Edit, Glob, Grep, Bash
 
 **Responsibilities**:
@@ -64,7 +64,7 @@ These agents form a **codebase-aware Rails development team** that:
 ### 🎛️ @rails-controller-engineer
 **API & Request Handler**
 
-**Model**: Claude Sonnet 4.6
+**Model**: Sonnet (`model: sonnet` — tracks the latest Sonnet)
 **Tools**: Read, Write, Edit, Glob, Grep, Bash
 
 **Responsibilities**:
@@ -84,7 +84,7 @@ These agents form a **codebase-aware Rails development team** that:
 ### 🎨 @rails-hotwire-engineer
 **Frontend & Interaction Specialist**
 
-**Model**: Claude Sonnet 4.6
+**Model**: Sonnet (`model: sonnet` — tracks the latest Sonnet)
 **Tools**: Read, Write, Edit, Glob, Grep, Bash
 
 **Responsibilities**:
@@ -104,7 +104,7 @@ These agents form a **codebase-aware Rails development team** that:
 ### 🧪 @rails-testing-expert
 **Quality Assurance & Testing**
 
-**Model**: Claude Sonnet 4.6
+**Model**: Opus (`model: opus` — tracks the latest Opus)
 **Tools**: Read, Write, Edit, Glob, Grep, Bash
 
 **Responsibilities**:
@@ -124,7 +124,7 @@ These agents form a **codebase-aware Rails development team** that:
 ### 🔒 @rails-security-performance
 **Security & Performance Auditor**
 
-**Model**: Claude Opus 4.6
+**Model**: Opus (`model: opus` — tracks the latest Opus)
 **Tools**: Read, Glob, Grep, Bash
 
 **Responsibilities**:
@@ -144,7 +144,7 @@ These agents form a **codebase-aware Rails development team** that:
 ### 🧐 @dhh-code-reviewer
 **DHH-Standards Code Reviewer — Mandatory Post-Write Gate**
 
-**Model**: Claude Opus 4.6
+**Model**: Opus (`model: opus` — tracks the latest Opus)
 **Tools**: Read, Write, Edit, Glob, Grep, Bash
 
 **Responsibilities**:
@@ -166,7 +166,7 @@ These agents form a **codebase-aware Rails development team** that:
 ### ⚡ @rails-background-jobs
 **Background Jobs & Async Processing Specialist**
 
-**Model**: Claude Sonnet 4.6
+**Model**: Sonnet (`model: sonnet` — tracks the latest Sonnet)
 **Tools**: Read, Write, Edit, Glob, Grep, Bash
 
 **Responsibilities**:
@@ -188,7 +188,7 @@ These agents form a **codebase-aware Rails development team** that:
 ### 🔐 @rails-authentication
 **Authentication & Identity Specialist**
 
-**Model**: Claude Sonnet 4.6
+**Model**: Sonnet (`model: sonnet` — tracks the latest Sonnet)
 **Tools**: Read, Write, Edit, Glob, Grep, Bash
 
 **Responsibilities**:
@@ -210,7 +210,7 @@ These agents form a **codebase-aware Rails development team** that:
 ### 🧩 @rails-viewcomponent-engineer
 **ViewComponent & Component-Driven UI Specialist**
 
-**Model**: Claude Sonnet 4.6
+**Model**: Sonnet (`model: sonnet` — tracks the latest Sonnet)
 **Tools**: Read, Write, Edit, Glob, Grep, Bash
 
 **Responsibilities**:
@@ -232,7 +232,7 @@ These agents form a **codebase-aware Rails development team** that:
 ### 📧 @rails-mailer
 **Email & Mailer Specialist**
 
-**Model**: Claude Sonnet 4.6
+**Model**: Sonnet (`model: sonnet` — tracks the latest Sonnet)
 **Tools**: Read, Write, Edit, Glob, Grep, Bash
 
 **Responsibilities**:
@@ -255,7 +255,7 @@ These agents form a **codebase-aware Rails development team** that:
 ### 🚢 @rails-deployment
 **Deployment & Infrastructure Specialist**
 
-**Model**: Claude Sonnet 4.6
+**Model**: Sonnet (`model: sonnet` — tracks the latest Sonnet)
 **Tools**: Read, Write, Edit, Glob, Grep, Bash
 
 **Responsibilities**:
@@ -280,7 +280,7 @@ These agents form a **codebase-aware Rails development team** that:
 ### 📦 @rails-data-migration
 **Data Migration & Seeds Specialist**
 
-**Model**: Claude Sonnet 4.6
+**Model**: Sonnet (`model: sonnet` — tracks the latest Sonnet)
 **Tools**: Read, Write, Edit, Glob, Grep, Bash
 
 **Responsibilities**:
@@ -300,7 +300,7 @@ These agents form a **codebase-aware Rails development team** that:
 ### 🧠 @rails-domain-logic
 **Domain Logic & PORO Specialist**
 
-**Model**: Claude Sonnet 4.6
+**Model**: Sonnet (`model: sonnet` — tracks the latest Sonnet)
 **Tools**: Read, Write, Edit, Glob, Grep, Bash
 
 **Responsibilities**:
@@ -321,7 +321,7 @@ These agents form a **codebase-aware Rails development team** that:
 ### 📡 @rails-api-serializer
 **API Serialization & Response Specialist**
 
-**Model**: Claude Sonnet 4.6
+**Model**: Sonnet (`model: sonnet` — tracks the latest Sonnet)
 **Tools**: Read, Write, Edit, Glob, Grep, Bash
 
 **Responsibilities**:
@@ -342,7 +342,7 @@ These agents form a **codebase-aware Rails development team** that:
 ### ♿ @rails-accessibility
 **Accessibility & Inclusive Design Specialist**
 
-**Model**: Claude Sonnet 4.6
+**Model**: Sonnet (`model: sonnet` — tracks the latest Sonnet)
 **Tools**: Read, Write, Edit, Glob, Grep, Bash
 
 **Responsibilities**:
@@ -363,7 +363,7 @@ These agents form a **codebase-aware Rails development team** that:
 ### 🌐 @rails-i18n
 **Internationalization & Localization Specialist**
 
-**Model**: Claude Sonnet 4.6
+**Model**: Haiku (`model: haiku` — tracks the latest Haiku)
 **Tools**: Read, Write, Edit, Glob, Grep, Bash
 
 **Responsibilities**:
@@ -384,7 +384,7 @@ These agents form a **codebase-aware Rails development team** that:
 ### 📎 @rails-active-storage
 **File Upload & Storage Specialist**
 
-**Model**: Claude Sonnet 4.6
+**Model**: Sonnet (`model: sonnet` — tracks the latest Sonnet)
 **Tools**: Read, Write, Edit, Glob, Grep, Bash
 
 **Responsibilities**:
@@ -636,7 +636,7 @@ They adapt to your choices: RSpec or Minitest, Hotwire or React, Devise or custo
 ## 📚 Agent Details
 
 Each agent file contains:
-- **Model specification** (Claude Sonnet 4.5)
+- **Model tier** (`opus` / `sonnet` / `haiku` alias in the frontmatter; never a pinned version)
 - **Available tools** for their work
 - **Analysis instructions** for learning your codebase
 - **Best practices** for Rails development
@@ -838,5 +838,5 @@ These agents are designed to be dropped into any Rails project. Use them freely 
 
 **Built for**: Any Ruby on Rails Application
 **Version**: 2.0
-**Models**: Claude Opus 4.6 (architect, security) / Claude Sonnet 4.6 (all others)
+**Models**: Opus (architect, security, testing-expert, dhh-code-reviewer, copywriter) / Haiku (i18n) / Sonnet (all others). Aliases, so agents track the latest model of each tier.
 **Integration**: Agent OS Compatible
