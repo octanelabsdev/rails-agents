@@ -132,6 +132,7 @@ These agents form a **codebase-aware Rails development team** that:
 - Authorization and authentication checks
 - Performance optimization
 - Query optimization and N+1 prevention
+- SSRF defense for any fetch of a user-supplied URL (resolve, check, pin), webhook endpoint security
 
 **Use When**:
 - Security reviews
@@ -175,6 +176,7 @@ These agents form a **codebase-aware Rails development team** that:
 - Job retry strategies and error handling
 - Queue configuration and prioritization
 - Multi-tenant job context preservation
+- Outbound webhook delivery (outbox records, destination-vs-code failure split, circuit breaker)
 
 **Use When**:
 - Creating background jobs

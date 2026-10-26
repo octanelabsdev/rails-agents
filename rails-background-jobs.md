@@ -108,7 +108,7 @@ default: &default
 production:
   <<: *default
   workers:
-    - queues: [ critical, default, low ]
+    - queues: [ critical, default, webhooks, low ]
       threads: 5
       processes: <%= ENV.fetch("JOB_CONCURRENCY", 2) %>
 ```
@@ -127,13 +127,22 @@ production:
     schedule: every hour
 
   cleanup_expired_magic_links:
-    class: MagicLink::CleanupJob
-    schedule: every day at 3am
+    command: "MagicLink.cleanup"
+    schedule: every 4 hours
 
-  cleanup_expired_webhook_deliveries:
-    class: Webhook::Delivery::CleanupJob
-    schedule: every day at 4am
+  cleanup_webhook_deliveries:
+    command: "Webhook::Delivery.cleanup"
+    schedule: every 15 minutes
+
+  clear_finished_jobs:
+    command: "SolidQueue::Job.clear_finished_in_batches(sleep_between_batches: 0.3)"
+    schedule: every hour at minute 12
 ```
+
+- Maintenance work is a model class method run with `command:`. Don't wrap it in a job class that only calls that method.
+- Retention sweeps call `delete_all` on a stale scope. Old rows don't need callbacks.
+- Put hourly tasks at odd minutes (12, 27, 50) so they don't all fire on the hour.
+- Prefer reset-on-use to a cron reset. A `spend` method that calls `reset_if_due` first is simpler than a nightly reset job.
 
 ## Job Structure Patterns
 
@@ -142,64 +151,87 @@ production:
 ```ruby
 # app/jobs/application_job.rb
 class ApplicationJob < ActiveJob::Base
-  # Retry on transient failures
+  prepend AccountTenanted # multi-tenant apps only, see below
+
   retry_on ActiveRecord::Deadlocked, wait: 5.seconds, attempts: 3
-  retry_on Net::OpenTimeout, wait: :polynomially_longer, attempts: 10
-
-  # Discard on permanent failures
   discard_on ActiveJob::DeserializationError
-
-  # Include account context for multi-tenancy
-  include AccountContextJob if defined?(AccountContextJob)
 end
 ```
+
+### Enqueue After Commit
+
+A job enqueued inside a transaction can run before the transaction commits. It then finds no record, or a stale one. Fix that at the root, not with retries:
+
+```ruby
+# config/initializers/active_job.rb
+ActiveSupport.on_load(:active_job) do
+  self.enqueue_after_transaction_commit = true
+end
+```
+
+This defaults to `false` and `load_defaults` doesn't turn it on (verified on Rails 8.1), so set it explicitly. Check the app's initializers before assuming it's on.
 
 ### Account Context Preservation
 
-For multi-tenant apps, preserve account context across job boundaries:
+In multi-tenant apps, capture `Current.account` when the job is **enqueued**. Restore it around `perform`. Never read `Current` inside `perform` without this; request context is gone by then.
 
 ```ruby
-# app/jobs/concerns/account_context_job.rb
-module AccountContextJob
+# app/jobs/concerns/account_tenanted.rb
+module AccountTenanted
   extend ActiveSupport::Concern
 
-  included do
-    attr_accessor :account_id
+  prepended do
+    attr_reader :account
+    around_perform :within_account
+  end
 
-    around_perform do |job, block|
-      if job.account_id.present?
-        account = Account.find(job.account_id)
-        Current.with_account(account) { block.call }
+  def initialize(...)
+    super
+    @account = Current.account
+  end
+
+  def serialize
+    super.merge("account" => account&.to_gid&.to_s)
+  end
+
+  def deserialize(job_data)
+    super
+    @account_gid = job_data["account"]
+  end
+
+  private
+    def within_account(&)
+      locate_account
+
+      if account
+        Current.set(account:, &)
       else
-        block.call
+        yield
       end
     end
-  end
 
-  def serialize
-    super.merge("account_id" => Current.account&.id)
-  end
-
-  def deserialize(job_data)
-    super
-    self.account_id = job_data["account_id"]
-  end
+    def locate_account
+      @account = GlobalID::Locator.locate(@account_gid) if @account_gid
+    rescue ActiveRecord::RecordNotFound
+      raise ActiveJob::DeserializationError # deleted account: let discard_on handle it
+    end
 end
-
-# config/initializers/active_job_extensions.rb
-module ActiveJobAccountExtensions
-  def serialize
-    super.merge("account_id" => Current.account&.id)
-  end
-
-  def deserialize(job_data)
-    super
-    Current.account = Account.find(job_data["account_id"]) if job_data["account_id"]
-  end
-end
-
-ActiveJob::Base.prepend(ActiveJobAccountExtensions)
 ```
+
+Framework jobs don't inherit from `ApplicationJob`, so prepend the concern to them too. Otherwise mail and broadcast rendering runs outside the tenant:
+
+```ruby
+# config/initializers/active_job.rb
+ActiveSupport.on_load(:action_mailer) { ActionMailer::MailDeliveryJob.prepend AccountTenanted }
+
+Rails.application.config.after_initialize do
+  Turbo::Streams::BroadcastJob.prepend AccountTenanted
+  Turbo::Streams::ActionBroadcastJob.prepend AccountTenanted
+  Turbo::Streams::BroadcastStreamJob.prepend AccountTenanted
+end
+```
+
+Other enqueue-time context (the actor, say) goes in as a keyword argument: `Mention::CreateJob.perform_later(self, mentioner: Current.user)`.
 
 ### Namespaced Jobs
 
@@ -228,14 +260,34 @@ end
 
 # app/jobs/webhook/delivery_job.rb
 class Webhook::DeliveryJob < ApplicationJob
-  queue_as :default
-  retry_on Webhook::Delivery::DeliveryError, wait: :polynomially_longer, attempts: 5
+  queue_as :webhooks
 
   def perform(delivery)
     delivery.deliver
   end
 end
 ```
+
+The job body is one call to a model method. The model owns the work, and the job only moves it off the request.
+
+### `_later` / `_now` Naming
+
+```ruby
+class Comment < ApplicationRecord
+  after_create_commit :notify_recipients_later
+
+  def notify_recipients
+    # the work: public, and what the job calls
+  end
+
+  private
+    def notify_recipients_later
+      NotifyRecipientsJob.perform_later(self)
+    end
+end
+```
+
+The plain name does the work and `_later` enqueues it. Add `_now` only when you need an explicit synchronous twin.
 
 ## Job Patterns
 
@@ -262,43 +314,102 @@ class PushNotificationJob < ApplicationJob
 end
 ```
 
-### Webhook Delivery Job
+### Outbound Webhooks (outbox pattern)
+
+Save each send as a record **first**, then deliver it. A crash or retry then leaves state behind, and the admin UI has an audit trail. Modeled on Fizzy's webhook pipeline (`app/models/webhook/delivery.rb`).
+
+**Fan-out.** An event enqueues one dispatch job. The dispatch job creates one `Delivery` row per subscribed webhook. Each row enqueues its own send:
 
 ```ruby
-# app/jobs/bot/webhook_job.rb
-class Bot::WebhookJob < ApplicationJob
-  queue_as :default
-  retry_on Net::OpenTimeout, wait: 5.seconds, attempts: 3
-  discard_on ActiveRecord::RecordNotFound
+class Event::WebhookDispatchJob < ApplicationJob
+  include ActiveJob::Continuable # Rails 8.1+
+  queue_as :webhooks
 
-  def perform(bot, message)
-    response = post_to_webhook(bot.webhook_url, message_payload(message))
-
-    if response.success?
-      log_delivery(bot, message, response)
-    else
-      handle_failure(bot, response)
+  def perform(event)
+    step :dispatch do |step|
+      Webhook.active.subscribed_to(event).find_each(start: step.cursor) do |webhook|
+        webhook.deliveries.create!(event:)
+        step.advance! from: webhook.id
+      end
     end
   end
+end
 
-  private
-    def post_to_webhook(url, payload)
-      HTTP.timeout(10)
-          .headers("Content-Type" => "application/json")
-          .post(url, json: payload)
-    end
+class Webhook::Delivery < ApplicationRecord
+  belongs_to :webhook
+  belongs_to :event
 
-    def message_payload(message)
-      {
-        id: message.id,
-        body: message.plain_text_body,
-        creator: message.creator.name,
-        room: message.room.name,
-        created_at: message.created_at.iso8601
-      }
-    end
+  enum :state, %w[ pending in_progress completed errored ].index_by(&:itself), default: :pending
+  store :response, coder: JSON
+
+  after_create_commit -> { Webhook::DeliveryJob.perform_later(self) }
 end
 ```
+
+**Failure classification is the important part.** There are two kinds of failure, and they're handled differently:
+
+- **The destination failed** (timeout, DNS, refused, TLS, 4xx/5xx): the delivery *ran*. Rescue the error, store a symbolic reason, mark it `completed`, and **don't retry the job**. The circuit breaker deals with dead endpoints.
+- **Our code raised:** mark it `errored!` and re-raise, so it shows up in failed jobs and the error tracker. Active Job doesn't retry anything by default; add a `retry_on` only for errors that a retry can actually fix.
+
+```ruby
+def deliver
+  in_progress!
+  update!(response: post_payload, state: :completed)
+  webhook.record_outcome_of(self)
+rescue
+  errored!
+  raise
+end
+
+private
+  def post_payload
+    post_to_destination(URI(webhook.url), payload, headers) # resolve, check, pin: see @rails-security-performance
+  rescue Surfguard::Unresolvable, Resolv::ResolvError, Resolv::ResolvTimeout, SocketError
+    { error: :dns_failed }
+  rescue Net::OpenTimeout, Net::ReadTimeout, Errno::ETIMEDOUT
+    { error: :timeout }
+  rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH, Errno::ECONNRESET
+    { error: :unreachable }
+  rescue OpenSSL::SSL::SSLError
+    { error: :tls_failed }
+  rescue ResponseTooLarge
+    { error: :response_too_large }
+end
+```
+
+**Circuit breaker.** Track consecutive failures and when the first one happened. Deactivate the webhook only when **both** thresholds are crossed: Fizzy uses 10 failures over at least an hour, so one bad minute doesn't trip it. Reset on any success, and give users a way to turn the webhook back on (`resource :activation`).
+
+**Hygiene.** Use a dedicated `webhooks` queue so slow endpoints can't starve other work. Cap how much of a response body you read (≈100KB). Sign payloads with an HMAC header plus a timestamp header. Prune old deliveries on a recurring `delete_all`. The rules for the destination URL itself (SSRF, can't change after create) are in `@rails-security-performance`.
+
+### Crash-Safe Iteration, Concurrency, Bulk Enqueue
+
+```ruby
+# A long loop that resumes where it stopped after a deploy or crash (Rails 8.1+)
+class Search::ReindexJob < ApplicationJob
+  include ActiveJob::Continuable
+
+  def perform
+    step :reindex do |step|
+      Card.find_each(start: step.cursor) do |card|
+        card.reindex
+        step.advance! from: card.id
+      end
+    end
+  end
+end
+
+# One job at a time per owner (Solid Queue)
+class Storage::ReconcileJob < ApplicationJob
+  limits_concurrency to: 1, key: ->(owner) { owner }
+end
+
+# Many jobs in one enqueue call, not one perform_later per row
+Reminder.due.in_batches do |batch|
+  ActiveJob.perform_all_later(batch.map { |reminder| Reminder::DeliverJob.new(reminder) })
+end
+```
+
+For async work in `after_destroy_commit`, copy the associations you'll need in `before_destroy`. The parent rows may be gone by the time the job runs.
 
 ### Export Job with Progress
 
@@ -449,21 +560,31 @@ class ExternalApiJob < ApplicationJob
 end
 ```
 
-### Custom Retry Logic
+### Transient vs Permanent Failures
+
+Retry only what can succeed later. A permanent failure (a bad address, a full mailbox) is expected. Classify it, log it at `:info`, and finish the job. Don't let it spend the queue's retries. A concern can hold the error rules, and you include it into framework jobs:
 
 ```ruby
-class WebhookDeliveryJob < ApplicationJob
-  retry_on Webhook::DeliveryError, attempts: 10 do |job, error|
-    job.arguments.first.update!(
-      state: :failed,
-      error_message: error.message
-    )
-  end
+# app/jobs/concerns/smtp_error_handling.rb
+module SmtpErrorHandling
+  extend ActiveSupport::Concern
 
-  def perform(delivery)
-    delivery.deliver
+  included do
+    retry_on Net::OpenTimeout, Net::ReadTimeout, Socket::ResolutionError, wait: :polynomially_longer
+    retry_on Net::SMTPServerBusy, wait: :polynomially_longer # 4xx: try again later
+
+    rescue_from Net::SMTPFatalError do |error|
+      if error.message.match?(/\A(550 5\.1\.1|552 5\.6\.0|555 5\.5\.4)/) # unknown mailbox, too large, bad params; never a broad 55x
+        Rails.logger.info "Undeliverable: #{error.message}"
+      else
+        raise
+      end
+    end
   end
 end
+
+# config/initializers/active_job.rb
+ActiveSupport.on_load(:action_mailer) { ActionMailer::MailDeliveryJob.include SmtpErrorHandling }
 ```
 
 ### Conditional Retry
@@ -614,18 +735,25 @@ class WebhookDeliveryJobTest < ActiveJob::TestCase
     assert_equal "completed", delivery.reload.state
   end
 
-  test "retries on network error" do
+  test "a timed-out destination completes the delivery with an error and is not retried" do
     delivery = webhook_deliveries(:pending)
 
     stub_request(:post, delivery.webhook.url)
       .to_raise(Net::OpenTimeout)
 
-    assert_enqueued_with(job: Webhook::DeliveryJob, wait: 5.seconds) do
+    assert_no_enqueued_jobs only: Webhook::DeliveryJob do
       Webhook::DeliveryJob.perform_now(delivery)
     end
+
+    assert_equal "completed", delivery.reload.state
+    assert_equal "timeout", delivery.response[:error].to_s
   end
 end
 ```
+
+The delivery resolves DNS before it posts, so stub resolution in a test helper and return a public IP. Otherwise the suite depends on the network.
+
+Don't unit-test one-line job classes. Test the async outcome from the model instead: `perform_enqueued_jobs(only: Mention::CreateJob) { comment.save! }`, then assert that the mention exists.
 
 ### RSpec
 
@@ -674,17 +802,17 @@ RSpec.describe Webhook::DeliveryJob, type: :job do
       end
     end
 
-    context "when network error" do
+    context "when the destination times out" do
       before do
         stub_request(:post, delivery.webhook.url).to_raise(Net::OpenTimeout)
       end
 
-      it "retries with backoff" do
-        expect {
-          described_class.perform_now(delivery)
-        }.to have_enqueued_job(described_class)
-          .with(delivery)
-          .on_queue(:default)
+      it "completes with an error instead of retrying" do
+        expect { described_class.perform_now(delivery) }
+          .not_to have_enqueued_job(described_class)
+
+        expect(delivery.reload).to be_completed
+        expect(delivery.response[:error].to_s).to eq("timeout")
       end
     end
   end
@@ -715,14 +843,17 @@ end
 - Keep jobs focused and single-purpose
 - Make jobs idempotent when possible
 - Use appropriate queue priorities
-- Preserve context across job boundaries
-- Handle failures gracefully with retries
+- Enqueue after commit (`enqueue_after_transaction_commit = true`)
+- Capture `Current` context at enqueue time, not at perform time
+- Retry transient failures; classify and finish permanent ones
 - Monitor job queues and failures
 - Use recurring jobs for scheduled tasks
 - Test job behavior thoroughly
 
 ❌ **Don't:**
-- Put complex business logic in jobs (use service objects)
+- Put business logic in jobs (the job calls one model method)
+- Retry destination failures the same way as our own bugs
+- Loop `perform_later` per row where `perform_all_later` or `Continuable` fits
 - Ignore retry configuration
 - Block queues with long-running jobs
 - Store sensitive data in job arguments
